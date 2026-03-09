@@ -1,0 +1,87 @@
+<h2>Admin Product Management</h2>
+
+<button onclick="createProduct()">Add Product</button>
+
+<div id="products"></div>
+
+<script src="common.js"></script>
+
+<script>
+
+    async function loadProducts(){
+
+        const response = await apiRequest("/api/admin/products");
+
+        const products = await response.json();
+
+        const container = document.getElementById("products");
+
+        container.innerHTML = "";
+
+        products.forEach(p => {
+
+            container.innerHTML += `
+
+            <div style="border:1px solid black; margin:10px; padding:10px;">
+
+                <b>${p.name}</b> <br>
+
+                MRP: ${p.mrp} <br>
+
+                Stock: ${p.stockBoxes} <br>
+
+                <button onclick="deleteProduct(${p.id})">Delete</button>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+    async function createProduct(){
+
+        const name = prompt("Product name");
+
+        const mrp = prompt("MRP");
+
+        const stock = prompt("Stock");
+
+        await apiRequest("/api/admin/products",{
+
+            method:"POST",
+
+            headers:{"Content-Type":"application/json"},
+
+            body: JSON.stringify({
+
+                name:name,
+
+                mrp:mrp,
+
+                stockBoxes:stock
+
+            })
+
+        });
+
+        loadProducts();
+
+    }
+
+    async function deleteProduct(id){
+
+        await apiRequest(`/api/admin/products/${id}`,{
+
+            method:"DELETE"
+
+        });
+
+        loadProducts();
+
+    }
+
+    loadProducts();
+
+</script>

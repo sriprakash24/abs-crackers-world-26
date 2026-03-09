@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+</head>
+<body>
+
+<h2>Cart</h2>
+<a href="dashboard.html">Back</a>
+<br><br>
+
+<table border="1" id="cartTable">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h3>Total Amount: <span id="totalAmount">0</span></h3>
+
+<button onclick="checkout()">Checkout</button>
+
+<p id="message"></p>
+
+<script src="common.js"></script>
+<script>
+
+    async function loadCart() {
+        const response = await apiRequest("/api/cart");
+
+        if (!response.ok) {
+            alert("Failed to load cart");
+            return;
+        }
+
+        const data = await response.json();
+
+        const tbody = document.querySelector("#cartTable tbody");
+        tbody.innerHTML = "";
+
+        document.getElementById("totalAmount").innerText = data.totalAmount;
+
+        data.items.forEach(item => {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${item.productName}</td>
+                <td>${item.sellingPrice}</td>
+                <td>
+                    <input type="number" id="qty-${item.productId}" value="${item.quantity}" min="1">
+                </td>
+                <td>${item.totalPrice}</td>
+                <td>
+                    <button onclick="updateQuantity(${item.productId})">Update</button>
+                    <button onclick="removeItem(${item.productId})">Remove</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    }
+
+    async function updateQuantity(productId) {
+
+        const qty = document.getElementById("qty-" + productId).value;
+
+        const response = await apiRequest(
+            `/api/cart/update?productId=${productId}&quantity=${qty}`,
+            "PUT"
+        );
+
+        if (response.ok) {
+            loadCart();
+        } else {
+            const error = await response.json();
+            document.getElementById("message").innerText = error.message;
+        }
+    }
+
+    async function removeItem(productId) {
+
+        const response = await apiRequest(
+            `/api/cart/remove?productId=${productId}`,
+            "DELETE"
+        );
+
+        if (response.ok) {
+            loadCart();
+        }
+    }
+
+    async function checkout() {
+
+        const response = await apiRequest(
+            "/api/orders/checkout",
+            "POST"
+        );
+
+        if (response.ok) {
+            alert("Order placed successfully!");
+            window.location.href = "orders.html";
+        } else {
+            const error = await response.json();
+            document.getElementById("message").innerText = error.message;
+        }
+    }
+
+    if (!localStorage.getItem("token")) {
+        window.location.href = "index.html";
+    }
+
+    loadCart();
+
+</script>
+
+</body>
+</html>

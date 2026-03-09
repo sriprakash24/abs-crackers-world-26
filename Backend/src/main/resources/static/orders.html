@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+</head>
+<body>
+
+<h2>My Orders</h2>
+<a href="dashboard.html">Back</a>
+
+<div id="ordersContainer"></div>
+
+<script src="common.js"></script>
+
+<script>
+
+    async function loadOrders() {
+
+        const response = await apiRequest("/api/orders/my-orders");
+
+        if (!response.ok) {
+            alert("Failed to load orders");
+            return;
+        }
+
+        const orders = await response.json();
+
+        const container = document.getElementById("ordersContainer");
+        container.innerHTML = "";
+
+        orders.forEach(order => {
+
+            let itemsHtml = "";
+
+            order.items.forEach(item => {
+
+                itemsHtml += `
+                    <tr>
+                        <td>${item.productName}</td>
+                        <td>${item.price}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.totalPrice}</td>
+                    </tr>
+                `;
+            });
+
+            const orderHtml = `
+                <div style="border:1px solid black; padding:10px; margin:10px;">
+
+                    <b>Order Number:</b> ${order.orderNumber} <br>
+                    <b>Status:</b> ${order.orderStatus} <br>
+                    <b>Payment:</b> ${order.paymentStatus} <br>
+                    <b>Total:</b> ${order.totalAmount} <br><br>
+
+                    <table border="1">
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                        ${itemsHtml}
+                    </table>
+
+                    <br>
+
+                    ${order.paymentStatus === 'PENDING' ? `
+                        <input type="file" id="file-${order.orderId}">
+                        <input type="text" id="ref-${order.orderId}" placeholder="UTR Reference">
+
+                        <button onclick="submitPayment(${order.orderId})">
+                            Submit Payment
+                        </button>
+                    ` : ''}
+
+                </div>
+            `;
+
+            container.innerHTML += orderHtml;
+        });
+    }
+
+    async function submitPayment(orderId) {
+
+        const fileInput = document.getElementById(`file-${orderId}`);
+        const reference = document.getElementById(`ref-${orderId}`).value;
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("reference", reference);
+
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(`/api/orders/${orderId}/submit-payment`, {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + token
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert("Payment submitted successfully!");
+            loadOrders();
+        } else {
+            const error = await response.json();
+            alert(error.message);
+        }
+    }
+
+    if (!localStorage.getItem("token")) {
+        window.location.href = "index.html";
+    }
+
+    loadOrders();
+
+</script>
+
+</body>
+</html>

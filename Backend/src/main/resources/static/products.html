@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products</title>
+</head>
+<body>
+
+<h2>Products</h2>
+<a href="dashboard.html">Back</a>
+<br><br>
+
+<table border="1" id="productTable">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>MRP</th>
+        <th>Selling Price</th>
+        <th>Quantity</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<p id="message"></p>
+
+<script src="common.js"></script>
+<script>
+
+    async function loadProducts() {
+        const response = await apiRequest("/api/products");
+
+        if (!response.ok) {
+            alert("Failed to load products");
+            return;
+        }
+
+        const data = await response.json();
+
+        const tbody = document.querySelector("#productTable tbody");
+        tbody.innerHTML = "";
+
+        data.content.forEach(product => {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${product.name}</td>
+                <td>${product.mrp}</td>
+                <td>${product.sellingPrice}</td>
+                <td>
+                    <input type="number" id="qty-${product.id}" value="1" min="1">
+                </td>
+                <td>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    }
+
+    async function addToCart(productId) {
+
+        const qty = document.getElementById("qty-" + productId).value;
+
+        const response = await apiRequest(
+            `/api/cart/add?productId=${productId}&quantity=${qty}`,
+            "POST"
+        );
+
+        if (response.ok) {
+            document.getElementById("message").innerText = "Added to cart!";
+        } else {
+            const error = await response.json();
+            document.getElementById("message").innerText = error.message;
+        }
+    }
+
+    if (!localStorage.getItem("token")) {
+        window.location.href = "index.html";
+    }
+
+    loadProducts();
+
+</script>
+
+</body>
+</html>

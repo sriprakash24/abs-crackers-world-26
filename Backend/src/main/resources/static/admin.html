@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+</head>
+
+<body>
+
+<h2>Admin Panel</h2>
+
+<a href="dashboard.html">Back</a>
+
+<br><br>
+
+<div id="ordersContainer"></div>
+
+<script src="common.js"></script>
+
+<script>
+
+    async function loadOrders() {
+
+        const response = await apiRequest("/api/admin/orders");
+
+        if (!response.ok) {
+            alert("Failed to load orders");
+            return;
+        }
+
+        const orders = await response.json();
+
+        const container = document.getElementById("ordersContainer");
+        container.innerHTML = "";
+
+        orders.forEach(order => {
+
+            const html = `
+            <div style="border:1px solid black; padding:10px; margin:10px;">
+
+                <b>Order:</b> ${order.orderNumber} <br>
+                <b>User:</b> ${order.user.name} <br>
+                <b>Total:</b> ${order.totalAmount} <br>
+                <b>Order Status:</b> ${order.orderStatus} <br>
+                <b>Payment Status:</b> ${order.paymentStatus} <br><br>
+
+                <button onclick="verifyPayment(${order.id})">
+                    Verify Payment
+                </button>
+
+                <button onclick="rejectPayment(${order.id})">
+                    Reject Payment
+                </button>
+
+                <button onclick="markPacked(${order.id})">
+                    Packed
+                </button>
+
+                <button onclick="markShipped(${order.id})">
+                    Shipped
+                </button>
+
+            </div>
+            `;
+
+            container.innerHTML += html;
+        });
+    }
+
+<!--    async function verifyPayment(id) {-->
+
+<!--        const response = await apiRequest(`/api/admin/orders/${id}/verify`, {-->
+<!--            method: "POST"-->
+<!--        });-->
+
+<!--        if (response.ok) {-->
+<!--            alert("Payment verified");-->
+<!--            loadOrders();-->
+<!--        } else {-->
+<!--            alert("Failed to verify payment");-->
+<!--        }-->
+<!--    }-->
+async function verifyPayment(orderId) {      const response = await fetch(`/api/admin/orders/${orderId}/verify`, {         method: "POST"     });      const result = await response.text();     alert(result);      location.reload(); }
+
+    async function rejectPayment(id) {
+
+        const response = await apiRequest(`/api/admin/orders/${id}/reject`, {
+            method: "POST"
+        });
+
+        if (response.ok) {
+            alert("Payment rejected");
+            loadOrders();
+        } else {
+            alert("Failed to reject payment");
+        }
+    }
+
+    async function markPacked(id) {
+
+        const productId = prompt("Enter Product ID");
+        const quantity = prompt("Enter Quantity");
+
+        if (!productId || !quantity) {
+            alert("Product ID and quantity required");
+            return;
+        }
+
+        const response = await apiRequest(
+            `/api/admin/orders/${id}/pack?productId=${productId}&quantity=${quantity}`,
+            {
+                method: "POST"
+            }
+        );
+
+        if (response.ok) {
+            alert("Order packed successfully");
+            loadOrders();
+        } else {
+            alert("Failed to pack order");
+        }
+    }
+
+    async function markShipped(id) {
+
+        const trackingId = prompt("Enter Tracking ID");
+        const transportName = prompt("Enter Transport Name");
+
+        if (!trackingId || !transportName) {
+            alert("Tracking ID and Transport Name required");
+            return;
+        }
+
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+
+        fileInput.onchange = async () => {
+
+            const file = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("trackingId", trackingId);
+            formData.append("transportName", transportName);
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(`/api/admin/orders/${id}/ship`, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("Order shipped successfully");
+                loadOrders();
+            } else {
+                alert("Failed to ship order");
+            }
+        };
+
+        fileInput.click();
+    }
+
+    loadOrders();
+
+</script>
+
+</body>
+</html>

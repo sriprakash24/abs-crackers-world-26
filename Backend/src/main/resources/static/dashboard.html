@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ABS Dashboard</title>
+</head>
+<body>
+
+<h2>ABS Internal Testing Dashboard</h2>
+
+<button onclick="logout()">Logout</button>
+<br><br>
+
+<a href="products.html">Products</a><br>
+<a href="cart.html">Cart</a><br>
+<a href="orders.html">My Orders</a><br>
+<a href="admin.html">Admin Panel</a><br>
+<a href="admin-products.html">Admin Product</a><br>
+
+<script>
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "index.html";
+    }
+
+    if (!localStorage.getItem("token")) {
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
