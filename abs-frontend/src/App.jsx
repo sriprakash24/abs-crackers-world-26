@@ -10,6 +10,8 @@ import Products from "./pages/Products";
 
 import CartPage from "./pages/CartPage";
 
+import OrdersPage from "./pages/OrdersPage";
+
 function App() {
   return (
     <Routes>
@@ -22,6 +24,8 @@ function App() {
       <Route path="/products/:category" element={<Products />} />
 
       <Route path="/cart" element={<CartPage />} />
+
+      <Route path="/orders" element={<OrdersPage />} />
     </Routes>
   );
 }

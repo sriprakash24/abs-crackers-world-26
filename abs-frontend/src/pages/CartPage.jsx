@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { ArrowLeft } from "lucide-react";
+import toast from "react-hot-toast";
 
 import API from "../api/api";
 
@@ -88,6 +89,25 @@ function CartPage() {
       loadCart();
     } catch (error) {
       console.error("Clear cart failed", error);
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const response = await API.post("/api/orders/checkout");
+
+      console.log("Order created:", response.data);
+
+      // optional: clear cart locally
+      setCartItems([]);
+
+      toast.success("Order placed successfully!");
+
+      navigate("/");
+    } catch (error) {
+      console.error("Checkout failed", error);
+
+      toast.error("Checkout failed. Please try again.");
     }
   };
 
@@ -223,7 +243,10 @@ function CartPage() {
                 Clear Cart
               </button>
 
-              <button className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold">
+              <button
+                onClick={handleCheckout}
+                className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold"
+              >
                 Checkout
               </button>
             </div>

@@ -110,7 +110,11 @@ function LandingPage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) setIsLoggedIn(true);
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
   }, []);
 
   const loadCart = async () => {
@@ -498,9 +502,19 @@ function LandingPage() {
           <span>Cart</span>
         </button>
 
-        <button className="flex flex-col items-center text-red-500 text-xs">
-          <Truck size={22} />
+        <button
+          onClick={() => {
+            const token = localStorage.getItem("token");
 
+            if (!token) {
+              navigate("/login");
+            } else {
+              navigate("/orders");
+            }
+          }}
+          className="flex flex-col items-center text-red-500 text-xs"
+        >
+          <Truck size={22} />
           <span>Orders</span>
         </button>
 
