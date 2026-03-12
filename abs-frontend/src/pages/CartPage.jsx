@@ -19,13 +19,39 @@ function CartPage() {
     }
   };
 
+  const increaseQty = async (productId) => {
+    try {
+      await API.post(`/api/cart/add?productId=${productId}&quantity=1`);
+
+      loadCart(); // reload cart
+    } catch (error) {
+      console.error("Increase failed", error);
+    }
+  };
+
+  const decreaseQty = async (productId, currentQty) => {
+    try {
+      if (currentQty <= 1) {
+        await API.delete(`/api/cart/remove?productId=${productId}`);
+      } else {
+        await API.put(
+          `/api/cart/update?productId=${productId}&quantity=${currentQty - 1}`,
+        );
+      }
+
+      loadCart(); // reload cart
+    } catch (error) {
+      console.error("Decrease failed", error);
+    }
+  };
+
   useEffect(() => {
     loadCart();
   }, []);
 
   const removeItem = async (productId) => {
     try {
-      await API.delete(`/api/cart/remove/${productId}`);
+      await API.delete(`/api/cart/remove?productId=${productId}`);
 
       loadCart();
     } catch (error) {
@@ -82,7 +108,23 @@ function CartPage() {
 
                   <p className="text-red-600 font-bold">₹{item.sellingPrice}</p>
 
-                  <p className="text-sm mt-1">Qty: {item.quantity}</p>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => decreaseQty(item.productId, item.quantity)}
+                      className="bg-gray-200 px-2 rounded"
+                    >
+                      -
+                    </button>
+
+                    <span className="font-semibold">{item.quantity}</span>
+
+                    <button
+                      onClick={() => increaseQty(item.productId)}
+                      className="bg-red-500 text-white px-2 rounded"
+                    >
+                      +
+                    </button>
+                  </div>
 
                   <p className="text-sm font-semibold mt-1">
                     Subtotal: ₹{item.sellingPrice * item.quantity}

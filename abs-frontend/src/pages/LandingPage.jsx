@@ -57,6 +57,8 @@ function LandingPage() {
 
   const [products, setProducts] = useState([]);
 
+  const [cart, setCart] = useState({});
+
   const [cartCount, setCartCount] = useState(0);
 
   const selectedIndex = categories.findIndex(
@@ -104,34 +106,32 @@ function LandingPage() {
   };
 
   useEffect(() => {
-    loadCategories();
-
-    loadCartCount();
-  }, []);
-
-  useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) setIsLoggedIn(true);
   }, []);
 
-  const loadCartCount = async () => {
-    const token = localStorage.getItem("token");
-
-    if (!token) return;
-
+  const loadCart = async () => {
     try {
       const res = await API.get("/api/cart");
 
-      const totalQty = res.data.items.reduce(
-        (sum, item) => sum + item.quantity,
+      const items = res.data.items || [];
 
-        0,
-      );
+      const cartMap = {};
 
-      setCartCount(totalQty);
-    } catch (err) {
-      console.error("Failed to load cart count", err);
+      let total = 0;
+
+      items.forEach((item) => {
+        cartMap[item.productId] = item.quantity;
+
+        total += item.quantity;
+      });
+
+      setCart(cartMap);
+
+      setCartCount(total);
+    } catch (error) {
+      console.error("Failed to load cart", error);
     }
   };
 
@@ -147,6 +147,7 @@ function LandingPage() {
 
   useEffect(() => {
     loadCategories();
+    loadCart();
   }, []);
 
   const handleLogout = () => {
@@ -187,32 +188,60 @@ function LandingPage() {
     }
   };
 
-  const increaseQty = (productId) => {
-    setCart((prevCart) => ({
-      ...prevCart,
+  const increaseQty = async (productId) => {
+    try {
+      await API.post(`/api/cart/add?productId=${productId}&quantity=1`);
 
-      [productId]: (prevCart[productId] || 0) + 1,
-    }));
+      // update local cart state
+
+      setCart((prev) => ({
+        ...prev,
+
+        [productId]: (prev[productId] || 0) + 1,
+      }));
+
+      // update badge
+
+      setCartCount((prev) => prev + 1);
+    } catch (error) {
+      console.error("Add to cart failed", error);
+    }
   };
 
-  const decreaseQty = (productId) => {
-    setCart((prevCart) => {
-      const newQty = (prevCart[productId] || 0) - 1;
+  const decreaseQty = async (productId) => {
+    const currentQty = cart[productId] || 0;
 
-      if (newQty <= 0) {
-        const updatedCart = { ...prevCart };
+    try {
+      if (currentQty <= 1) {
+        // remove item completely
 
-        delete updatedCart[productId];
+        await API.delete(`/api/cart/remove?productId=${productId}`);
 
-        return updatedCart;
+        setCart((prev) => {
+          const updated = { ...prev };
+
+          delete updated[productId];
+
+          return updated;
+        });
+      } else {
+        // decrease quantity
+
+        await API.put(
+          `/api/cart/update?productId=${productId}&quantity=${currentQty - 1}`,
+        );
+
+        setCart((prev) => ({
+          ...prev,
+
+          [productId]: currentQty - 1,
+        }));
       }
 
-      return {
-        ...prevCart,
-
-        [productId]: newQty,
-      };
-    });
+      setCartCount((prev) => Math.max(prev - 1, 0));
+    } catch (error) {
+      console.error("Decrease failed", error);
+    }
   };
 
   return (
