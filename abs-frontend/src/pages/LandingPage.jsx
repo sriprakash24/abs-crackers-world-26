@@ -388,7 +388,7 @@ function LandingPage() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-xl shadow p-3"
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 hover:shadow-md transition"
                 >
                   <img
                     src={product.imageUrl}
@@ -402,7 +402,7 @@ function LandingPage() {
                     ₹{product.mrp}
                   </p>
 
-                  <p className="text-red-600 font-bold">
+                  <p className="text-red-600 font-bold text-lg">
                     ₹{product.sellingPrice}
                   </p>
 
@@ -411,7 +411,7 @@ function LandingPage() {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => decreaseQty(product.id)}
-                          className="bg-gray-200 px-2 rounded"
+                          className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded"
                         >
                           -
                         </button>
@@ -422,7 +422,7 @@ function LandingPage() {
 
                         <button
                           onClick={() => increaseQty(product.id)}
-                          className="bg-red-500 text-white px-2 rounded"
+                          className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded"
                         >
                           +
                         </button>
@@ -430,7 +430,7 @@ function LandingPage() {
                     ) : (
                       <button
                         onClick={() => increaseQty(product.id)}
-                        className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+                        className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-red-600 transition"
                       >
                         Add
                       </button>

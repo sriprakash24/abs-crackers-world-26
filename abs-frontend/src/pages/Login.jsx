@@ -16,13 +16,23 @@ function Login() {
     try {
       const response = await API.post("/api/auth/login", {
         phone,
-
         password,
       });
 
-      localStorage.setItem("token", response.data);
+      const token = response.data;
 
-      navigate("/");
+      localStorage.setItem("token", token);
+
+      /* Decode JWT to get role */
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const role = payload.role;
+
+      /* Redirect based on role */
+      if (role === "ROLE_ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
 
       window.location.reload();
     } catch (error) {

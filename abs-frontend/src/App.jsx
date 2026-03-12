@@ -12,6 +12,13 @@ import CartPage from "./pages/CartPage";
 
 import OrdersPage from "./pages/OrdersPage";
 
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminRoute from "./components/AdminRoute";
+import AdminAddProduct from "./pages/admin/AdminAddProduct";
+
 function App() {
   return (
     <Routes>
@@ -26,6 +33,20 @@ function App() {
       <Route path="/cart" element={<CartPage />} />
 
       <Route path="/orders" element={<OrdersPage />} />
+
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route index element={<AdminDashboard />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="orders" element={<AdminOrders />} />
+        <Route path="products/add" element={<AdminAddProduct />} />
+      </Route>
     </Routes>
   );
 }
