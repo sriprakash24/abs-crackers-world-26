@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import { User, ShoppingCart, Truck, Grid, LogOut } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import API from "../api/api";
 
@@ -60,6 +60,8 @@ function LandingPage() {
   const [cart, setCart] = useState({});
 
   const [cartCount, setCartCount] = useState(0);
+
+  const productSectionRef = useRef(null);
 
   const selectedIndex = categories.findIndex(
     (c) => c.name === selectedCategory,
@@ -149,6 +151,18 @@ function LandingPage() {
     loadCategories();
     loadCart();
   }, []);
+
+  useEffect(() => {
+    if (selectedCategory && productSectionRef.current) {
+      const yOffset = -80;
+      const y =
+        productSectionRef.current.getBoundingClientRect().top +
+        window.pageYOffset +
+        yOffset;
+
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  }, [selectedCategory]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -355,10 +369,16 @@ function LandingPage() {
         {/* PRODUCTS SECTION (FIXED POSITION) */}
 
         {selectedCategory && (
-          <div className="col-span-2 mt-8">
-            <h3 className="text-lg font-bold text-center mb-4">
-              {selectedCategory}
-            </h3>
+          <div ref={productSectionRef} className="col-span-2 mt-8">
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex-1 h-[2px] bg-gray-200"></div>
+
+              <h3 className="px-4 text-xl font-bold text-red-600 tracking-wide">
+                {selectedCategory}
+              </h3>
+
+              <div className="flex-1 h-[2px] bg-gray-200"></div>
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               {products.map((product) => (
@@ -456,7 +476,15 @@ function LandingPage() {
         </button>
 
         <button
-          onClick={() => navigate("/cart")}
+          onClick={() => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+              navigate("/login");
+            } else {
+              navigate("/cart");
+            }
+          }}
           className="flex flex-col items-center text-red-500 text-xs relative"
         >
           <ShoppingCart size={22} />

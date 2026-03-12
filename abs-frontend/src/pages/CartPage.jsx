@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import API from "../api/api";
 
@@ -6,6 +9,25 @@ function CartPage() {
   const [cartItems, setCartItems] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
+  const [showSummary, setShowSummary] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const nearBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
+
+      if (nearBottom) {
+        setShowSummary(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const loadCart = async () => {
     try {
@@ -80,8 +102,19 @@ function CartPage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
-      <h2 className="text-xl font-bold mb-6">Your Cart</h2>
+    <div className="bg-gray-50 min-h-screen p-6 pb-48">
+      <div className="sticky top-0 z-20 bg-white shadow-sm px-4 py-3 flex items-center justify-between">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2 rounded-full hover:bg-gray-100"
+        >
+          <ArrowLeft size={22} className="text-red-500" />
+        </button>
+
+        <h2 className="text-lg font-bold text-gray-700">Your Cart</h2>
+
+        <div className="w-10"></div>
+      </div>
 
       {cartItems.length === 0 ? (
         <p className="text-gray-500">Your cart is empty</p>
@@ -141,18 +174,56 @@ function CartPage() {
             ))}
           </div>
 
-          <div className="mt-6 bg-white p-4 rounded-xl shadow">
-            <p className="text-lg font-bold">Total: ₹{getTotal()}</p>
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg px-6 py-4">
+            {/* toggle arrow */}
+            <div className="flex justify-center mb-2">
+              <button
+                onClick={() => setShowSummary(!showSummary)}
+                className="text-gray-500 text-sm"
+              >
+                {showSummary ? (
+                  <ChevronDown size={18} />
+                ) : (
+                  <ChevronUp size={18} />
+                )}
+              </button>
+            </div>
 
-            <div className="flex gap-4 mt-4">
+            {/* expandable section */}
+            {showSummary && (
+              <>
+                <div className="flex justify-between text-gray-600 text-sm mb-1">
+                  <span>Items</span>
+                  <span>{cartItems.length}</span>
+                </div>
+
+                <div className="flex justify-between text-gray-600 text-sm mb-2">
+                  <span>Total Quantity</span>
+                  <span>
+                    {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+                  </span>
+                </div>
+              </>
+            )}
+
+            {/* total */}
+            <div className="flex justify-between items-center border-t pt-2 mb-3">
+              <span className="text-sm font-semibold">Total Amount</span>
+              <span className="text-lg font-bold text-red-600">
+                ₹{getTotal()}
+              </span>
+            </div>
+
+            {/* buttons */}
+            <div className="flex gap-3">
               <button
                 onClick={clearCart}
-                className="bg-gray-200 px-4 py-2 rounded"
+                className="flex-1 bg-gray-200 py-2 rounded-lg text-sm"
               >
                 Clear Cart
               </button>
 
-              <button className="bg-red-500 text-white px-4 py-2 rounded">
+              <button className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold">
                 Checkout
               </button>
             </div>
