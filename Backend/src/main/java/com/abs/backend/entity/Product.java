@@ -38,7 +38,7 @@ public class Product {
 
     private Boolean allowPartialCase;
 
-    private Integer lowStockThreshold;
+    private Integer lowStockThreshold = 0;
 
     private String imageUrl;
 

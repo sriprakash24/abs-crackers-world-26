@@ -23,6 +23,7 @@ public class ProductMapper {
                 .sellingPrice(pricingService.calculatePrice(product, role))
                 .stockStatus(stockService.getStockStatus(product))
                 .imageUrl(product.getImageUrl())
+                .stock(product.getStockBoxes())
                 .build();
     }
 }

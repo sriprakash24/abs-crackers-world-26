@@ -22,4 +22,6 @@ public class ProductResponse {
     private String stockStatus;
 
     private String imageUrl;
+
+    private Integer stock;
 }
