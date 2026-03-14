@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 
-import { User, ShoppingCart, Truck, Grid, LogOut } from "lucide-react";
+import { User, ShoppingCart, Truck, Grid, LogOut, Menu, X } from "lucide-react";
 
 import { useEffect, useState, useRef } from "react";
 
 import API from "../api/api";
 
-import logo from "../assets/logo.jpg";
+import logo from "../assets/logo1.png";
 
 import sparklers from "../assets/categories/sparklers.png";
 
@@ -61,6 +61,7 @@ function LandingPage() {
 
   const [cartCount, setCartCount] = useState(0);
   const [productsLoading, setProductsLoading] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const productSectionRef = useRef(null);
 
@@ -270,42 +271,83 @@ function LandingPage() {
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* HEADER */}
 
-      <header className="bg-white shadow">
+      <header className="bg-white shadow sticky top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-          <div className="flex items-center space-x-2">
-            <img src={logo} alt="ABS Crackers" className="h-10 w-auto" />
-
-            <span className="text-red-600 font-bold text-lg sm:text-xl">
-              ABS Crackers World
-            </span>
+          {/* LOGO ONLY */}
+          <div className="flex items-center cursor-pointer">
+            <img
+              src={logo}
+              alt="ABS Crackers"
+              className="h-12 object-contain"
+            />
           </div>
 
-          <div className="flex items-center space-x-3">
-            {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-1 text-red-500 text-sm"
-              >
-                <LogOut size={18} />
+          {/* HAMBURGER MENU */}
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-red-500"
+            >
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
 
-                <span>Logout</span>
-              </button>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate("/login")}
-                  className="border border-red-500 text-red-500 px-3 py-1 rounded-md text-sm"
-                >
-                  Login
-                </button>
+            {menuOpen && (
+              <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                {!isLoggedIn ? (
+                  <>
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      Login
+                    </button>
 
-                <button
-                  onClick={() => navigate("/register")}
-                  className="bg-red-500 text-white px-3 py-1 rounded-md text-sm"
-                >
-                  Register
-                </button>
-              </>
+                    <button
+                      onClick={() => navigate("/register")}
+                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      Register
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => navigate("/profile")}
+                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      Profile
+                    </button>
+
+                    <button
+                      onClick={() => navigate("/orders")}
+                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      Orders
+                    </button>
+
+                    <button
+                      onClick={() => navigate("/about")}
+                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      About Us
+                    </button>
+
+                    <button
+                      onClick={() => navigate("/contact")}
+                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      Contact
+                    </button>
+
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-50"
+                    >
+                      Logout
+                    </button>
+                  </>
+                )}
+              </div>
             )}
           </div>
         </div>
