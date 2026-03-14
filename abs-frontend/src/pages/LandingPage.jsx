@@ -60,6 +60,7 @@ function LandingPage() {
   const [cart, setCart] = useState({});
 
   const [cartCount, setCartCount] = useState(0);
+  const [productsLoading, setProductsLoading] = useState(false);
 
   const productSectionRef = useRef(null);
 
@@ -196,6 +197,7 @@ function LandingPage() {
     setSelectedCategory(category);
 
     try {
+      setProductsLoading(true);
       const response = await API.get(
         `/api/products/by-category?category=${encodeURIComponent(category)}`,
       );
@@ -203,6 +205,8 @@ function LandingPage() {
       setProducts(response.data);
     } catch (error) {
       console.error("Failed to load products", error);
+    } finally {
+      setProductsLoading(false); // STOP SPINNER
     }
   };
 
@@ -385,59 +389,67 @@ function LandingPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 hover:shadow-md transition"
-                >
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="w-full h-24 object-contain"
-                  />
+              {productsLoading ? (
+                <div className="col-span-2 flex justify-center py-10">
+                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-red-500 border-t-transparent"></div>
+                </div>
+              ) : (
+                products.map((product) => (
+                  <div
+                    key={product.id}
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 hover:shadow-md transition"
+                  >
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-24 object-contain"
+                    />
 
-                  <h4 className="text-sm font-semibold mt-2">{product.name}</h4>
+                    <h4 className="text-sm font-semibold mt-2">
+                      {product.name}
+                    </h4>
 
-                  <p className="text-gray-400 text-xs line-through">
-                    ₹{product.mrp}
-                  </p>
+                    <p className="text-gray-400 text-xs line-through">
+                      ₹{product.mrp}
+                    </p>
 
-                  <p className="text-red-600 font-bold text-lg">
-                    ₹{product.sellingPrice}
-                  </p>
+                    <p className="text-red-600 font-bold text-lg">
+                      ₹{product.sellingPrice}
+                    </p>
 
-                  <div className="mt-2 flex justify-center">
-                    {cart[product.id] ? (
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => decreaseQty(product.id)}
-                          className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded"
-                        >
-                          -
-                        </button>
+                    <div className="mt-2 flex justify-center">
+                      {cart[product.id] ? (
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => decreaseQty(product.id)}
+                            className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded"
+                          >
+                            -
+                          </button>
 
-                        <span className="text-sm font-semibold">
-                          {cart[product.id]}
-                        </span>
+                          <span className="text-sm font-semibold">
+                            {cart[product.id]}
+                          </span>
 
+                          <button
+                            onClick={() => increaseQty(product.id)}
+                            className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded"
+                          >
+                            +
+                          </button>
+                        </div>
+                      ) : (
                         <button
                           onClick={() => increaseQty(product.id)}
-                          className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded"
+                          className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-red-600 transition"
                         >
-                          +
+                          Add
                         </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => increaseQty(product.id)}
-                        className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-red-600 transition"
-                      >
-                        Add
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         )}

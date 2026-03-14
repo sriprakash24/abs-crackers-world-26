@@ -19,6 +19,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminRoute from "./components/AdminRoute";
 import AdminAddProduct from "./pages/admin/AdminAddProduct";
 import AdminCategories from "./pages/admin/AdminCategories";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
       <Route path="/cart" element={<CartPage />} />
 
       <Route path="/orders" element={<OrdersPage />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
 
       <Route
         path="/admin"

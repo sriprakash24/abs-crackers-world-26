@@ -1,42 +1,27 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/api";
-
-import logo from "../assets/logo1.png";
 import Swal from "sweetalert2";
+import logo from "../assets/logo1.png";
 
-function Register() {
+function ForgotPassword() {
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("ROLE_RETAIL");
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = async (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
 
-    const phoneRegex = /^[0-9]{10}$/;
-
-    if (!phoneRegex.test(phone)) {
-      Swal.fire({
-        icon: "warning",
-        title: "Invalid Mobile Number",
-        text: "Mobile number must be exactly 10 digits",
-        confirmButtonColor: "#dc2626",
-      });
-      return;
-    }
-
-    if (password !== confirmPassword) {
+    if (newPassword !== confirmPassword) {
       Swal.fire({
         icon: "warning",
         title: "Password mismatch",
-        text: "Password and Confirm Password must match",
+        text: "New password and confirm password must match",
         confirmButtonColor: "#dc2626",
       });
       return;
@@ -45,18 +30,15 @@ function Register() {
     try {
       setLoading(true);
 
-      await API.post("/api/auth/register", {
-        name,
+      await API.post("/api/auth/reset-password", {
         phone,
-        email,
-        password,
-        role,
+        newPassword,
       });
 
       Swal.fire({
         icon: "success",
-        title: "Registration Successful",
-        text: "Your account has been created",
+        title: "Password Updated",
+        text: "Your password has been updated successfully",
         confirmButtonColor: "#dc2626",
       }).then(() => {
         navigate("/login");
@@ -64,7 +46,7 @@ function Register() {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Registration Failed",
+        title: "Reset Failed",
         text: error?.response?.data?.message || "Something went wrong",
         confirmButtonColor: "#dc2626",
       });
@@ -82,61 +64,33 @@ function Register() {
         </div>
 
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Create Account
+          Reset Password
         </h2>
 
-        <form onSubmit={handleRegister} className="space-y-5">
-          {/* NAME */}
-          <div className="relative">
-            <span className="absolute left-3 top-3 text-gray-400">👤</span>
-            <input
-              type="text"
-              placeholder="Full Name"
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-400 outline-none shadow-sm"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
+        <form onSubmit={handleReset} className="space-y-5">
           {/* PHONE */}
           <div className="relative">
             <span className="absolute left-3 top-3 text-gray-400">📱</span>
             <input
-              type="tel"
+              type="text"
               placeholder="Mobile Number"
-              maxLength="10"
               className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-400 outline-none shadow-sm"
               value={phone}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "");
-                setPhone(value);
-              }}
+              onChange={(e) => setPhone(e.target.value)}
               required
             />
           </div>
 
-          {/* EMAIL */}
-          <div className="relative">
-            <span className="absolute left-3 top-3 text-gray-400">✉</span>
-            <input
-              type="email"
-              placeholder="Email (Optional)"
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-400 outline-none shadow-sm"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          {/* PASSWORD */}
+          {/* NEW PASSWORD */}
           <div className="relative">
             <span className="absolute left-3 top-3 text-gray-400">🔒</span>
+
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="New Password"
               className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-400 outline-none shadow-sm"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
               required
             />
 
@@ -151,6 +105,7 @@ function Register() {
           {/* CONFIRM PASSWORD */}
           <div className="relative">
             <span className="absolute left-3 top-3 text-gray-400">🔒</span>
+
             <input
               type="password"
               placeholder="Confirm Password"
@@ -161,14 +116,6 @@ function Register() {
             />
           </div>
 
-          {/* ROLE */}
-          <input
-            type="text"
-            value="Retail Customer"
-            disabled
-            className="w-full py-3 border border-gray-200 rounded-xl bg-gray-100 text-gray-600 text-center"
-          />
-
           {/* BUTTON */}
           <button
             type="submit"
@@ -178,16 +125,17 @@ function Register() {
             {loading ? (
               <span className="flex items-center gap-2">
                 <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
-                Registering...
+                Updating...
               </span>
             ) : (
-              "Register"
+              "Update Password"
             )}
           </button>
         </form>
 
+        {/* BACK TO LOGIN */}
         <p className="text-sm text-gray-500 mt-6 text-center">
-          Already have an account?
+          Remember your password?
           <span
             onClick={() => navigate("/login")}
             className="text-red-500 cursor-pointer ml-1 font-semibold"
@@ -200,4 +148,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default ForgotPassword;

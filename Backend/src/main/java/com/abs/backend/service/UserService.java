@@ -19,8 +19,11 @@ public class UserService {
 
     public String register(RegisterRequest request) {
 
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new EmailAlreadyExistsException();
+//        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+//            throw new EmailAlreadyExistsException();
+//        }
+        if (userRepository.findByPhone(request.getPhone()).isPresent()) {
+            throw new ValidationException("Phone number already registered");
         }
 
         User user = User.builder()
@@ -52,5 +55,15 @@ public class UserService {
     public User getByPhone(String phone) {
         return userRepository.findByPhone(phone)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    public void resetPassword(String phone, String newPassword) {
+
+        User user = userRepository.findByPhone(phone)
+                .orElseThrow(() -> new ValidationException("User not found with this phone number"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
     }
 }
