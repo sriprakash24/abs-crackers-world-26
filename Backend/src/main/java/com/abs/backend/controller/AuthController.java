@@ -7,6 +7,9 @@ import com.abs.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.abs.backend.dto.ProfileResponse;
+import com.abs.backend.security.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public String register(@RequestBody RegisterRequest request) {
@@ -31,5 +35,15 @@ public class AuthController {
         userService.resetPassword(request.getPhone(), request.getNewPassword());
 
         return ResponseEntity.ok("Password updated successfully");
+    }
+
+    @GetMapping("/profile")
+    public ProfileResponse getProfile(HttpServletRequest request) {
+
+        String token = request.getHeader("Authorization").substring(7);
+
+        String phone = jwtUtil.extractPhone(token);
+
+        return userService.getProfile(phone);
     }
 }

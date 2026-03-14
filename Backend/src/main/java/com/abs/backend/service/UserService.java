@@ -1,5 +1,6 @@
 package com.abs.backend.service;
 
+import com.abs.backend.dto.ProfileResponse;
 import com.abs.backend.dto.RegisterRequest;
 import com.abs.backend.entity.User;
 import com.abs.backend.exception.*;
@@ -65,5 +66,17 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(user);
+    }
+
+    public ProfileResponse getProfile(String phone) {
+
+        User user = getByPhone(phone);
+
+        ProfileResponse response = new ProfileResponse();
+        response.setName(user.getName());
+        response.setPhone(user.getPhone());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }

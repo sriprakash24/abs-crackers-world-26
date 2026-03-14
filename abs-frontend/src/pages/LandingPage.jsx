@@ -1,6 +1,17 @@
 import { useNavigate } from "react-router-dom";
 
-import { User, ShoppingCart, Truck, Grid, LogOut, Menu, X } from "lucide-react";
+import {
+  User,
+  ShoppingCart,
+  Truck,
+  Grid,
+  LogOut,
+  Menu,
+  X,
+  Package,
+  Info,
+  Phone,
+} from "lucide-react";
 
 import { useEffect, useState, useRef } from "react";
 
@@ -62,6 +73,8 @@ function LandingPage() {
   const [cartCount, setCartCount] = useState(0);
   const [productsLoading, setProductsLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const [userName, setUserName] = useState("");
 
   const productSectionRef = useRef(null);
 
@@ -119,6 +132,30 @@ function LandingPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const res = await API.get("/api/auth/profile");
+
+      setUserName(res.data.name);
+    } catch (error) {
+      console.error("Failed to load profile", error);
+    }
+  };
+
   const loadCart = async () => {
     try {
       const res = await API.get("/api/cart");
@@ -156,6 +193,7 @@ function LandingPage() {
   useEffect(() => {
     loadCategories();
     loadCart();
+    loadUserProfile();
   }, []);
 
   useEffect(() => {
@@ -284,74 +322,155 @@ function LandingPage() {
 
           {/* HAMBURGER MENU */}
           <div className="relative">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="text-red-500"
-            >
-              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            <button onClick={() => setMenuOpen(true)} className="text-red-500">
+              <Menu size={28} />
             </button>
-
-            {menuOpen && (
-              <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-                {!isLoggedIn ? (
-                  <>
-                    <button
-                      onClick={() => navigate("/login")}
-                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
-                    >
-                      Login
-                    </button>
-
-                    <button
-                      onClick={() => navigate("/register")}
-                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
-                    >
-                      Register
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => navigate("/profile")}
-                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
-                    >
-                      Profile
-                    </button>
-
-                    <button
-                      onClick={() => navigate("/orders")}
-                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
-                    >
-                      Orders
-                    </button>
-
-                    <button
-                      onClick={() => navigate("/about")}
-                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
-                    >
-                      About Us
-                    </button>
-
-                    <button
-                      onClick={() => navigate("/contact")}
-                      className="block w-full text-left px-4 py-3 hover:bg-gray-50"
-                    >
-                      Contact
-                    </button>
-
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-3 text-red-500 hover:bg-gray-50"
-                    >
-                      Logout
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </header>
+
+      {/* SIDEBAR DRAWER */}
+
+      {menuOpen && (
+        <div ref={menuRef} className="fixed inset-0 z-50 flex">
+          {/* BACKDROP */}
+
+          <div
+            className="flex-1 bg-black/40"
+            onClick={() => setMenuOpen(false)}
+          ></div>
+
+          {/* SIDEBAR */}
+
+          <div className="w-64 bg-white h-full shadow-xl p-6 animate-slide-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold text-red-600">Menu</h2>
+
+              <button onClick={() => setMenuOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* MENU ITEMS */}
+
+            <div className="flex flex-col">
+              {/* USER HEADER */}
+              {isLoggedIn && (
+                <div className="mb-6 border-b pb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                      <User size={20} className="text-red-600" />
+                    </div>
+
+                    <div>
+                      <p className="font-semibold text-gray-800">
+                        {userName || "Customer"}
+                      </p>
+                      <p className="text-xs text-gray-500">Welcome back</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* HOME */}
+              <button
+                onClick={() => {
+                  navigate("/");
+                  setMenuOpen(false);
+                }}
+                className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+              >
+                <Grid size={18} />
+                Home
+              </button>
+
+              {/* AUTH BASED MENU */}
+              {!isLoggedIn ? (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+                  >
+                    <User size={18} />
+                    Login
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/register");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+                  >
+                    <User size={18} />
+                    Register
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate("/profile");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+                  >
+                    <User size={18} />
+                    Profile
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/orders");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+                  >
+                    <Package size={18} />
+                    Orders
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/about");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+                  >
+                    <Info size={18} />
+                    About Us
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate("/contact");
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
+                  >
+                    <Phone size={18} />
+                    Contact
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-2 py-3 text-red-500 hover:bg-red-50 rounded-lg"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* BANNER */}
 
