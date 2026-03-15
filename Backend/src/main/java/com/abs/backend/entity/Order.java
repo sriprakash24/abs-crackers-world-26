@@ -68,4 +68,18 @@ public class Order {
     private String shippingSlipPath;
     private LocalDateTime shippedAt;
     private LocalDateTime deliveredAt;
+
+    private Long addressId;
+
+    private String deliveryName;
+
+    private String deliveryPhone;
+
+    private String deliveryAddress;
+
+    private String deliveryCity;
+
+    private String deliveryState;
+
+    private String deliveryPincode;
 }

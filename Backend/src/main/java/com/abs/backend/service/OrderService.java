@@ -23,11 +23,15 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final FileStorageService fileStorageService;
+    private final AddressRepository addressRepository;
 
-    public OrderResponse createOrderFromCart(User user) {
+    public OrderResponse createOrderFromCart(User user, Long addressId) {
 
         Cart cart = cartRepository.findByUserAndActiveTrue(user)
                 .orElseThrow(() -> new ValidationException("Cart is empty"));
+
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
 
         if (cart.getItems() == null || cart.getItems().isEmpty()) {
             throw new ValidationException("Cart is empty");
@@ -43,6 +47,16 @@ public class OrderService {
                 .orderNumber(generateOrderNumber())
                 .user(user)
                 .orderType(orderType)   // ✅ ADD THIS
+
+                // ✅ ADDRESS SNAPSHOT
+                .addressId(address.getId())
+                .deliveryName(address.getFullName())
+                .deliveryPhone(address.getPhone())
+                .deliveryAddress(address.getAddressLine())
+                .deliveryCity(address.getCity())
+                .deliveryState(address.getState())
+                .deliveryPincode(address.getPincode())
+
                 .orderStatus(OrderStatus.PLACED)
                 .paymentStatus(PaymentStatus.PENDING)
                 .editable(true)
@@ -98,8 +112,8 @@ public class OrderService {
             totalAmount = totalAmount.add(totalPrice);
 
             // Deduct stock
-            product.setStockBoxes(product.getStockBoxes() - cartItem.getQuantity());
-            productRepository.save(product);
+//            product.setStockBoxes(product.getStockBoxes() - cartItem.getQuantity());
+//            productRepository.save(product);
         }
 
         order.setTotalAmount(totalAmount);

@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronUp, ChevronDown, ArrowLeft } from "lucide-react";
+import {
+  ChevronUp,
+  ChevronDown,
+  ArrowLeft,
+  MapPin,
+  User,
+  Phone,
+  CheckCircle,
+} from "lucide-react";
 import API from "../api/api";
 import Swal from "sweetalert2";
 
@@ -124,7 +132,9 @@ function CartPage() {
   const handleCheckout = async () => {
     try {
       setCheckoutLoading(true);
-      const response = await API.post("/api/orders/checkout");
+      const response = await API.post("/api/orders/checkout", {
+        addressId: selectedAddress,
+      });
 
       setCartItems([]);
 
@@ -332,17 +342,32 @@ function CartPage() {
       {showCheckoutModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[420px]">
-            <h2 className="text-lg font-bold mb-4">Confirm Delivery Details</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <MapPin className="text-red-500" size={20} />
+              <h2 className="text-lg font-bold text-gray-800">
+                Confirm Delivery Address
+              </h2>
+            </div>
 
             {/* PROFILE */}
 
             {profile && (
               <div className="mb-4">
-                <p className="text-sm text-gray-600">Name</p>
-                <p className="font-semibold">{profile.name}</p>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <User size={16} className="text-red-400" />
+                    Name
+                  </div>
 
-                <p className="text-sm text-gray-600 mt-2">Mobile</p>
-                <p className="font-semibold">{profile.phone}</p>
+                  <p className="font-semibold">{profile.name}</p>
+
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mt-2">
+                    <Phone size={16} className="text-red-400" />
+                    Mobile
+                  </div>
+
+                  <p className="font-semibold">{profile.phone}</p>
+                </div>
               </div>
             )}
 
@@ -372,19 +397,55 @@ function CartPage() {
                   Select Delivery Address
                 </p>
 
-                <select
-                  className="w-full border rounded-lg p-2"
-                  value={selectedAddress}
-                  onChange={(e) => setSelectedAddress(e.target.value)}
-                >
-                  <option value="">Select Address</option>
-
+                <div className="space-y-3 max-h-60 overflow-y-auto">
                   {addresses.map((addr) => (
-                    <option key={addr.id} value={addr.id}>
-                      {addr.addressLine}, {addr.city}, {addr.state}
-                    </option>
+                    <div
+                      key={addr.id}
+                      onClick={() => setSelectedAddress(addr.id)}
+                      className={`border rounded-xl p-3 cursor-pointer transition flex justify-between items-start
+
+                        ${
+                          selectedAddress === addr.id
+                            ? "border-red-500 bg-red-50"
+                            : "border-gray-200 hover:border-red-300"
+                        }`}
+                    >
+                      <div>
+                        <p className="font-semibold text-sm">{addr.fullName}</p>
+
+                        <p className="text-xs text-gray-500">{addr.phone}</p>
+
+                        <div className="flex gap-2 mt-1">
+                          <MapPin size={16} className="text-red-400 mt-[2px]" />
+
+                          <p className="text-sm text-gray-700">
+                            {addr.addressLine}
+                          </p>
+                        </div>
+
+                        <p className="text-xs text-gray-500">
+                          {addr.city}, {addr.state} - {addr.pincode}
+                        </p>
+                      </div>
+
+                      {/* SELECTED CHECK ICON */}
+
+                      {selectedAddress === addr.id && (
+                        <CheckCircle size={20} className="text-red-500" />
+                      )}
+                    </div>
                   ))}
-                </select>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowCheckoutModal(false);
+                    navigate("/profile?checkout=true");
+                  }}
+                  className="mt-4 w-full border border-dashed border-red-400 text-red-500 py-2 rounded-lg hover:bg-red-50 transition"
+                >
+                  <MapPin size={16} className="inline mr-1" />
+                  Add New Address
+                </button>
               </div>
             )}
 

@@ -1,5 +1,6 @@
 package com.abs.backend.controller;
 
+import com.abs.backend.dto.CheckoutRequest;
 import com.abs.backend.dto.OrderResponse;
 import com.abs.backend.entity.Order;
 import com.abs.backend.entity.User;
@@ -22,9 +23,13 @@ public class OrderController {
     private final UserService userService;
 
     @PostMapping("/checkout")
-    public OrderResponse checkout(@AuthenticationPrincipal UserDetails principal) {
+    public OrderResponse checkout(
+            @AuthenticationPrincipal UserDetails principal,
+            @RequestBody CheckoutRequest request) {
+
         User user = userService.getByPhone(principal.getUsername());
-        return orderService.createOrderFromCart(user);
+
+        return orderService.createOrderFromCart(user, request.getAddressId());
     }
 
     @GetMapping("/my-orders")
