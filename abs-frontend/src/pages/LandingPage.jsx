@@ -70,6 +70,8 @@ function LandingPage() {
 
   const [cart, setCart] = useState({});
 
+  const [addingProduct, setAddingProduct] = useState(null);
+
   const [cartCount, setCartCount] = useState(0);
   const [productsLoading, setProductsLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -251,23 +253,42 @@ function LandingPage() {
 
   const increaseQty = async (productId) => {
     try {
-      await API.post(`/api/cart/add?productId=${productId}&quantity=1`);
+      setAddingProduct(productId);
 
-      // update local cart state
+      await API.post(`/api/cart/add?productId=${productId}&quantity=1`);
 
       setCart((prev) => ({
         ...prev,
-
         [productId]: (prev[productId] || 0) + 1,
       }));
-
-      // update badge
 
       setCartCount((prev) => prev + 1);
     } catch (error) {
       console.error("Add to cart failed", error);
+    } finally {
+      setAddingProduct(null);
     }
   };
+
+  // const increaseQty = async (productId) => {
+  //   try {
+  //     await API.post(`/api/cart/add?productId=${productId}&quantity=1`);
+
+  //     // update local cart state
+
+  //     setCart((prev) => ({
+  //       ...prev,
+
+  //       [productId]: (prev[productId] || 0) + 1,
+  //     }));
+
+  //     // update badge
+
+  //     setCartCount((prev) => prev + 1);
+  //   } catch (error) {
+  //     console.error("Add to cart failed", error);
+  //   }
+  // };
 
   const decreaseQty = async (productId) => {
     const currentQty = cart[productId] || 0;
@@ -525,7 +546,7 @@ function LandingPage() {
               <img
                 src={categoryImages[cat.name]}
                 alt={cat.name}
-                className="w-26 h-26 object-contain"
+                className="w-28 h-28 object-contain"
               />
 
               <h3 className="text-center text-sm font-semibold text-gray-700 leading-tight px-1">
@@ -602,9 +623,17 @@ function LandingPage() {
                       ) : (
                         <button
                           onClick={() => increaseQty(product.id)}
-                          className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-red-600 transition"
+                          disabled={addingProduct === product.id}
+                          className="bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-red-600 transition disabled:opacity-50"
                         >
-                          Add
+                          {addingProduct === product.id ? (
+                            <span className="flex items-center gap-2">
+                              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                              Adding
+                            </span>
+                          ) : (
+                            "Add"
+                          )}
                         </button>
                       )}
                     </div>

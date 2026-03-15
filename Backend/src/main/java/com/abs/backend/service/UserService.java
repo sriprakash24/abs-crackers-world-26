@@ -1,6 +1,7 @@
 package com.abs.backend.service;
 
 import com.abs.backend.dto.ProfileResponse;
+import com.abs.backend.dto.ProfileUpdateRequest;
 import com.abs.backend.dto.RegisterRequest;
 import com.abs.backend.entity.User;
 import com.abs.backend.exception.*;
@@ -71,6 +72,24 @@ public class UserService {
     public ProfileResponse getProfile(String phone) {
 
         User user = getByPhone(phone);
+
+        ProfileResponse response = new ProfileResponse();
+        response.setName(user.getName());
+        response.setPhone(user.getPhone());
+        response.setEmail(user.getEmail());
+
+        return response;
+    }
+
+    public ProfileResponse updateProfile(String phone, ProfileUpdateRequest request) {
+
+        User user = userRepository.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+
+        userRepository.save(user);
 
         ProfileResponse response = new ProfileResponse();
         response.setName(user.getName());

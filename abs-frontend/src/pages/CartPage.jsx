@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
+import { ChevronUp, ChevronDown, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
-
 import API from "../api/api";
+import Swal from "sweetalert2";
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [showSummary, setShowSummary] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState("");
 
   const navigate = useNavigate();
 
@@ -33,7 +34,6 @@ function CartPage() {
   const loadCart = async () => {
     try {
       const res = await API.get("/api/cart");
-
       setCartItems(res.data.items);
     } catch (error) {
       console.error("Failed to load cart", error);
@@ -42,11 +42,26 @@ function CartPage() {
     }
   };
 
+  const loadProfileAndAddress = async () => {
+    try {
+      const profileRes = await API.get("/api/auth/profile");
+      const addressRes = await API.get("/api/address");
+
+      setProfile(profileRes.data);
+      setAddresses(addressRes.data);
+    } catch (err) {
+      console.error("Failed loading profile/address", err);
+    }
+  };
+
+  useEffect(() => {
+    loadCart();
+  }, []);
+
   const increaseQty = async (productId) => {
     try {
       await API.post(`/api/cart/add?productId=${productId}&quantity=1`);
-
-      loadCart(); // reload cart
+      loadCart();
     } catch (error) {
       console.error("Increase failed", error);
     }
@@ -62,21 +77,36 @@ function CartPage() {
         );
       }
 
-      loadCart(); // reload cart
+      loadCart();
     } catch (error) {
       console.error("Decrease failed", error);
     }
   };
 
-  useEffect(() => {
-    loadCart();
-  }, []);
-
   const removeItem = async (productId) => {
+    const result = await Swal.fire({
+      title: "Remove item?",
+      text: "This product will be removed from your cart",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Remove",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await API.delete(`/api/cart/remove?productId=${productId}`);
 
       loadCart();
+
+      Swal.fire({
+        icon: "success",
+        title: "Item removed",
+        timer: 1200,
+        showConfirmButton: false,
+      });
     } catch (error) {
       console.error("Remove failed", error);
     }
@@ -85,7 +115,6 @@ function CartPage() {
   const clearCart = async () => {
     try {
       await API.delete("/api/cart/clear");
-
       loadCart();
     } catch (error) {
       console.error("Clear cart failed", error);
@@ -96,19 +125,35 @@ function CartPage() {
     try {
       const response = await API.post("/api/orders/checkout");
 
-      console.log("Order created:", response.data);
-
-      // optional: clear cart locally
       setCartItems([]);
 
-      toast.success("Order placed successfully!");
+      const result = await Swal.fire({
+        icon: "success",
+        title: "Order Placed Successfully!",
+        text: "Your order has been placed.",
+        showCancelButton: true,
+        confirmButtonText: "Proceed to Payment",
+        cancelButtonText: "Close",
+        confirmButtonColor: "#dc2626",
+      });
 
-      navigate("/");
+      if (result.isConfirmed) {
+        navigate("/payment");
+      }
     } catch (error) {
       console.error("Checkout failed", error);
 
-      toast.error("Checkout failed. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Checkout Failed",
+        text: "Please try again",
+      });
     }
+  };
+  const handleCheckoutClick = async () => {
+    await loadProfileAndAddress();
+
+    setShowCheckoutModal(true);
   };
 
   const getTotal = () => {
@@ -118,12 +163,18 @@ function CartPage() {
   };
 
   if (loading) {
-    return <p className="p-6">Loading cart...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-orange-50 to-yellow-100">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-red-500 border-t-transparent"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6 pb-48">
-      <div className="sticky top-0 z-20 bg-white shadow-sm px-4 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-100 p-6 pb-72">
+      {/* HEADER */}
+
+      <div className="sticky top-0 z-30 bg-white shadow-sm px-4 py-3 rounded-xl flex items-center justify-between mb-6">
         <button
           onClick={() => navigate(-1)}
           className="p-2 rounded-full hover:bg-gray-100"
@@ -137,79 +188,94 @@ function CartPage() {
       </div>
 
       {cartItems.length === 0 ? (
-        <p className="text-gray-500">Your cart is empty</p>
+        <div className="flex flex-col items-center justify-center mt-24">
+          <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
+
+          <button
+            onClick={() => navigate("/")}
+            className="bg-red-500 text-white px-6 py-2 rounded-lg"
+          >
+            Browse Products
+          </button>
+        </div>
       ) : (
         <>
-          <div className="space-y-4">
-            {cartItems.map((item) => (
-              <div
-                key={item.productId}
-                className="bg-white shadow rounded-xl p-4 flex gap-4 items-center"
-              >
-                <img
-                  src={item.imageUrl}
-                  alt={item.productName}
-                  className="w-20 h-20 object-contain"
-                />
+          {/* CART ITEMS */}
 
-                <div className="flex-1">
-                  <p className="font-semibold text-sm">{item.productName}</p>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 space-y-4">
+              {cartItems.map((item) => (
+                <div
+                  key={item.productId}
+                  className="bg-white rounded-2xl shadow-md p-4 flex gap-4 items-center"
+                >
+                  <img
+                    src={item.imageUrl}
+                    alt={item.productName}
+                    className="w-20 h-20 object-contain"
+                  />
 
-                  <p className="text-gray-400 text-xs line-through">
-                    ₹{item.mrp}
-                  </p>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm">{item.productName}</p>
 
-                  <p className="text-red-600 font-bold">₹{item.sellingPrice}</p>
+                    <p className="text-gray-400 text-xs line-through">
+                      ₹{item.mrp}
+                    </p>
 
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => decreaseQty(item.productId, item.quantity)}
-                      className="bg-gray-200 px-2 rounded"
-                    >
-                      -
-                    </button>
+                    <p className="text-red-600 font-bold">
+                      ₹{item.sellingPrice}
+                    </p>
 
-                    <span className="font-semibold">{item.quantity}</span>
+                    {/* QTY CONTROLLER */}
 
-                    <button
-                      onClick={() => increaseQty(item.productId)}
-                      className="bg-red-500 text-white px-2 rounded"
-                    >
-                      +
-                    </button>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() =>
+                          decreaseQty(item.productId, item.quantity)
+                        }
+                        className="w-7 h-7 bg-gray-200 rounded flex items-center justify-center"
+                      >
+                        -
+                      </button>
+
+                      <span className="font-semibold">{item.quantity}</span>
+
+                      <button
+                        onClick={() => increaseQty(item.productId)}
+                        className="w-7 h-7 bg-red-500 text-white rounded flex items-center justify-center"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <p className="text-sm font-semibold mt-1">
+                      Subtotal ₹{item.sellingPrice * item.quantity}
+                    </p>
                   </div>
 
-                  <p className="text-sm font-semibold mt-1">
-                    Subtotal: ₹{item.sellingPrice * item.quantity}
-                  </p>
+                  <button
+                    onClick={() => removeItem(item.productId)}
+                    className="text-red-500 text-sm"
+                  >
+                    Remove
+                  </button>
                 </div>
-
-                <button
-                  onClick={() => removeItem(item.productId)}
-                  className="text-red-500 text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg px-6 py-4">
-            {/* toggle arrow */}
+          {/* BOTTOM SUMMARY */}
+
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-xl px-6 py-4">
             <div className="flex justify-center mb-2">
               <button
                 onClick={() => setShowSummary(!showSummary)}
-                className="text-gray-500 text-sm"
+                className="text-gray-500"
               >
-                {showSummary ? (
-                  <ChevronDown size={18} />
-                ) : (
-                  <ChevronUp size={18} />
-                )}
+                {showSummary ? <ChevronDown /> : <ChevronUp />}
               </button>
             </div>
 
-            {/* expandable section */}
             {showSummary && (
               <>
                 <div className="flex justify-between text-gray-600 text-sm mb-1">
@@ -226,15 +292,14 @@ function CartPage() {
               </>
             )}
 
-            {/* total */}
             <div className="flex justify-between items-center border-t pt-2 mb-3">
               <span className="text-sm font-semibold">Total Amount</span>
+
               <span className="text-lg font-bold text-red-600">
                 ₹{getTotal()}
               </span>
             </div>
 
-            {/* buttons */}
             <div className="flex gap-3">
               <button
                 onClick={clearCart}
@@ -244,7 +309,7 @@ function CartPage() {
               </button>
 
               <button
-                onClick={handleCheckout}
+                onClick={handleCheckoutClick}
                 className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold"
               >
                 Checkout
@@ -252,6 +317,111 @@ function CartPage() {
             </div>
           </div>
         </>
+      )}
+      {showCheckoutModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[420px]">
+            <h2 className="text-lg font-bold mb-4">Confirm Delivery Details</h2>
+
+            {/* PROFILE */}
+
+            {profile && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-600">Name</p>
+                <p className="font-semibold">{profile.name}</p>
+
+                <p className="text-sm text-gray-600 mt-2">Mobile</p>
+                <p className="font-semibold">{profile.phone}</p>
+              </div>
+            )}
+
+            {/* ADDRESS */}
+
+            {/* ADDRESS */}
+
+            {addresses.length === 0 ? (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-red-600 mb-3">
+                  Delivery address required to place the order
+                </p>
+
+                <button
+                  onClick={() => {
+                    setShowCheckoutModal(false);
+                    navigate("/profile?checkout=true");
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm"
+                >
+                  Add Address
+                </button>
+              </div>
+            ) : (
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 mb-1">
+                  Select Delivery Address
+                </p>
+
+                <select
+                  className="w-full border rounded-lg p-2"
+                  value={selectedAddress}
+                  onChange={(e) => setSelectedAddress(e.target.value)}
+                >
+                  <option value="">Select Address</option>
+
+                  {addresses.map((addr) => (
+                    <option key={addr.id} value={addr.id}>
+                      {addr.addressLine}, {addr.city}, {addr.state}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* ACTIONS */}
+
+            <div className="flex gap-3 mt-5">
+              <button
+                onClick={() => setShowCheckoutModal(false)}
+                className="flex-1 bg-gray-200 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  if (addresses.length === 0) {
+                    Swal.fire({
+                      icon: "warning",
+                      title: "Address Required",
+                      text: "Please add delivery address before checkout",
+                      confirmButtonColor: "#dc2626",
+                    });
+
+                    return;
+                  }
+
+                  if (!selectedAddress) {
+                    Swal.fire({
+                      icon: "warning",
+                      title: "Select Address",
+                      text: "Please choose delivery address",
+                      confirmButtonColor: "#dc2626",
+                    });
+
+                    return;
+                  }
+
+                  setShowCheckoutModal(false);
+
+                  handleCheckout();
+                }}
+                className="flex-1 bg-red-500 text-white py-2 rounded-lg"
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

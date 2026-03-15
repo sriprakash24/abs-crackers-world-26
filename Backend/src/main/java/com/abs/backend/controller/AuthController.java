@@ -1,13 +1,10 @@
 package com.abs.backend.controller;
 
-import com.abs.backend.dto.LoginRequest;
-import com.abs.backend.dto.RegisterRequest;
-import com.abs.backend.dto.ResetPasswordRequest;
+import com.abs.backend.dto.*;
 import com.abs.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.abs.backend.dto.ProfileResponse;
 import com.abs.backend.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -45,5 +42,17 @@ public class AuthController {
         String phone = jwtUtil.extractPhone(token);
 
         return userService.getProfile(phone);
+    }
+
+    @PutMapping("/profile")
+    public ProfileResponse updateProfile(
+            HttpServletRequest request,
+            @RequestBody ProfileUpdateRequest body) {
+
+        String token = request.getHeader("Authorization").substring(7);
+
+        String phone = jwtUtil.extractPhone(token);
+
+        return userService.updateProfile(phone, body);
     }
 }
