@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../api/api";
 import Swal from "sweetalert2";
 
-import { User, Phone, Mail, Edit, ArrowLeft } from "lucide-react";
+import { User, Phone, Mail, Edit, ArrowLeft, MapPin, Home } from "lucide-react";
 
 import logo from "../assets/logo1.png";
 
@@ -21,6 +21,7 @@ function Profile() {
   const [addresses, setAddresses] = useState([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
+  const [savingAddress, setSavingAddress] = useState(false);
 
   const [addressForm, setAddressForm] = useState({
     fullName: profile.name || "",
@@ -51,7 +52,49 @@ function Profile() {
   };
 
   const saveAddress = async () => {
+    if (!addressForm.fullName.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Full Name Required",
+      });
+    }
+
+    if (!addressForm.phone.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Phone Number Required",
+      });
+    }
+
+    if (!addressForm.addressLine.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Address Line Required",
+      });
+    }
+
+    if (!addressForm.city.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "City Required",
+      });
+    }
+
+    if (!addressForm.state.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "State Required",
+      });
+    }
+
+    if (!addressForm.pincode.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Pincode Required",
+      });
+    }
     try {
+      setSavingAddress(true);
       if (editingAddressId) {
         await API.put(`/api/address/${editingAddressId}`, addressForm);
       } else {
@@ -63,6 +106,8 @@ function Profile() {
       loadAddresses();
     } catch (error) {
       console.error("Save address failed", error);
+    } finally {
+      setSavingAddress(false);
     }
   };
 
@@ -281,74 +326,114 @@ function Profile() {
       </div>
 
       {/* ADD ADDRESS MODAL */}
+      {/* ADD ADDRESS MODAL */}
       {showAddressModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold mb-4">Add Address</h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            {/* HEADER */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="bg-red-100 p-2 rounded-full">
+                <MapPin className="text-red-500" size={20} />
+              </div>
 
+              <h3 className="text-lg font-bold text-gray-800">
+                Add Delivery Address
+              </h3>
+            </div>
+
+            {/* FORM */}
             <div className="space-y-3">
-              <input
-                name="fullName"
-                placeholder="Full Name"
-                value={addressForm.fullName}
-                onChange={handleAddressChange}
-                className="w-full border p-2 rounded"
-              />
+              <div className="relative">
+                <User
+                  size={16}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
+                <input
+                  name="fullName"
+                  placeholder="Full Name"
+                  value={addressForm.fullName}
+                  onChange={handleAddressChange}
+                  className="w-full border rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-red-400 outline-none"
+                />
+              </div>
 
-              <input
-                name="phone"
-                placeholder="Phone"
-                value={addressForm.phone}
-                onChange={handleAddressChange}
-                className="w-full border p-2 rounded"
-              />
+              <div className="relative">
+                <Phone
+                  size={16}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
+                <input
+                  name="phone"
+                  placeholder="Phone Number"
+                  value={addressForm.phone}
+                  onChange={handleAddressChange}
+                  className="w-full border rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-red-400 outline-none"
+                />
+              </div>
 
-              <input
-                name="addressLine"
-                placeholder="Address Line"
-                value={addressForm.addressLine}
-                onChange={handleAddressChange}
-                className="w-full border p-2 rounded"
-              />
+              <div className="relative">
+                <Home
+                  size={16}
+                  className="absolute left-3 top-3 text-gray-400"
+                />
+                <input
+                  name="addressLine"
+                  placeholder="Street Address"
+                  value={addressForm.addressLine}
+                  onChange={handleAddressChange}
+                  className="w-full border rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-red-400 outline-none"
+                />
+              </div>
 
-              <input
-                name="city"
-                placeholder="City"
-                value={addressForm.city}
-                onChange={handleAddressChange}
-                className="w-full border p-2 rounded"
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  name="city"
+                  placeholder="City"
+                  value={addressForm.city}
+                  onChange={handleAddressChange}
+                  className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-400 outline-none"
+                />
 
-              <input
-                name="state"
-                placeholder="State"
-                value={addressForm.state}
-                onChange={handleAddressChange}
-                className="w-full border p-2 rounded"
-              />
+                <input
+                  name="state"
+                  placeholder="State"
+                  value={addressForm.state}
+                  onChange={handleAddressChange}
+                  className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-400 outline-none"
+                />
+              </div>
 
               <input
                 name="pincode"
                 placeholder="Pincode"
                 value={addressForm.pincode}
                 onChange={handleAddressChange}
-                className="w-full border p-2 rounded"
+                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-400 outline-none"
               />
             </div>
 
-            <div className="flex justify-end gap-3 mt-5">
+            {/* ACTIONS */}
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowAddressModal(false)}
-                className="px-4 py-2 border rounded"
+                className="px-4 py-2 border rounded-lg hover:bg-gray-50"
               >
                 Cancel
               </button>
 
               <button
                 onClick={saveAddress}
-                className="px-4 py-2 bg-red-500 text-white rounded"
+                disabled={savingAddress}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
               >
-                {editingAddressId ? "Update" : "Save"}
+                {savingAddress ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Saving...
+                  </>
+                ) : (
+                  "Save Address"
+                )}
               </button>
             </div>
           </div>

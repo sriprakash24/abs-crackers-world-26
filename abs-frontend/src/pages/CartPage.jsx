@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronUp, ChevronDown, ArrowLeft } from "lucide-react";
-import toast from "react-hot-toast";
 import API from "../api/api";
 import Swal from "sweetalert2";
 
@@ -13,6 +12,7 @@ function CartPage() {
   const [addresses, setAddresses] = useState([]);
   const [profile, setProfile] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState("");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -123,6 +123,7 @@ function CartPage() {
 
   const handleCheckout = async () => {
     try {
+      setCheckoutLoading(true);
       const response = await API.post("/api/orders/checkout");
 
       setCartItems([]);
@@ -148,6 +149,8 @@ function CartPage() {
         title: "Checkout Failed",
         text: "Please try again",
       });
+    } finally {
+      setCheckoutLoading(false);
     }
   };
   const handleCheckoutClick = async () => {
@@ -310,9 +313,17 @@ function CartPage() {
 
               <button
                 onClick={handleCheckoutClick}
-                className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold"
+                disabled={checkoutLoading}
+                className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold flex items-center justify-center gap-2"
               >
-                Checkout
+                {checkoutLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Processing
+                  </>
+                ) : (
+                  "Checkout"
+                )}
               </button>
             </div>
           </div>
