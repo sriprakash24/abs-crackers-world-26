@@ -137,6 +137,7 @@ function CartPage() {
       });
 
       setCartItems([]);
+      const orderId = response.data.orderId;
 
       const result = await Swal.fire({
         icon: "success",
@@ -149,7 +150,7 @@ function CartPage() {
       });
 
       if (result.isConfirmed) {
-        navigate("/payment");
+        navigate(`/payment/${orderId}`);
       }
     } catch (error) {
       console.error("Checkout failed", error);

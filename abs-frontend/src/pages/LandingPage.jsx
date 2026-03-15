@@ -77,6 +77,7 @@ function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [userName, setUserName] = useState("");
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
   const productSectionRef = useRef(null);
 
@@ -721,7 +722,7 @@ function LandingPage() {
         </button>
 
         <button
-          onClick={() => window.scrollTo({ top: 700, behavior: "smooth" })}
+          onClick={() => setCategoryModalOpen(true)}
           className="flex flex-col items-center text-red-500 text-xs"
         >
           <Grid size={22} />
@@ -729,6 +730,59 @@ function LandingPage() {
           <span>Categories</span>
         </button>
       </nav>
+
+      {/* CATEGORY MODAL */}
+
+      {categoryModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end">
+          {/* BACKDROP */}
+
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setCategoryModalOpen(false)}
+          ></div>
+
+          {/* MODAL */}
+
+          <div className="relative bg-white w-full rounded-t-3xl shadow-xl p-5 max-h-[70vh] overflow-y-auto animate-slide-up">
+            {/* HEADER */}
+
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-red-600">
+                Browse Categories
+              </h3>
+
+              <button onClick={() => setCategoryModalOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* CATEGORY GRID */}
+
+            <div className="grid grid-cols-3 gap-4">
+              {categories.map((cat, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setCategoryModalOpen(false);
+                    handleCategoryClick(cat.name);
+                  }}
+                  className="flex flex-col items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-red-50 transition cursor-pointer"
+                >
+                  <img
+                    src={categoryImages[cat.name]}
+                    className="w-14 h-14 object-contain"
+                  />
+
+                  <span className="text-xs text-center font-semibold">
+                    {cat.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

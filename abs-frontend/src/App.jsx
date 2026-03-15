@@ -21,6 +21,7 @@ import AdminAddProduct from "./pages/admin/AdminAddProduct";
 import AdminCategories from "./pages/admin/AdminCategories";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/payment/:orderId" element={<PaymentPage />} />
 
       <Route
         path="/admin"
