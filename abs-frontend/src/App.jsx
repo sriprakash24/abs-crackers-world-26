@@ -19,6 +19,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminRoute from "./components/AdminRoute";
 import AdminAddProduct from "./pages/admin/AdminAddProduct";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminPayments from "./pages/admin/AdminPayments";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 import PaymentPage from "./pages/PaymentPage";
@@ -54,6 +55,7 @@ function App() {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="products/add" element={<AdminAddProduct />} />
         <Route path="/admin/categories" element={<AdminCategories />} />
+        <Route path="payments" element={<AdminPayments />} />
       </Route>
     </Routes>
   );

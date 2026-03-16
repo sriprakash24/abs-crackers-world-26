@@ -1,10 +1,18 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Package, ShoppingCart, LogOut } from "lucide-react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  LogOut,
+  Menu,
+  Boxes,
+  CreditCard,
+} from "lucide-react";
 import { useState } from "react";
 
 function AdminLayout() {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = () => {
@@ -12,51 +20,49 @@ function AdminLayout() {
     navigate("/login");
   };
 
+  const isActive = (path) => location.pathname === path;
+
   return (
-    <div className="min-h-screen bg-gray-100 pb-16">
+    <div className="min-h-screen bg-gray-100 pb-20">
       {/* HEADER */}
+      <div className="bg-white shadow px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+        <h1 className="font-bold text-red-600 text-lg">ABS Admin</h1>
 
-      <div className="bg-white shadow px-4 py-3 flex items-center justify-between">
-        <h1 className="font-bold text-red-600 text-lg">Admin Panel</h1>
-
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="text-2xl text-red-500 leading-none"
-        >
-          ☰
+        <button onClick={() => setMenuOpen(true)} className="text-red-600">
+          <Menu size={26} />
         </button>
       </div>
 
+      {/* SIDE DRAWER */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 flex">
-          {/* Overlay */}
+          {/* overlay */}
           <div
-            className="flex-1 bg-black/30"
+            className="flex-1 bg-black/40"
             onClick={() => setMenuOpen(false)}
           />
 
-          {/* Drawer */}
-          <div className="w-64 bg-white shadow-lg p-4">
+          {/* drawer */}
+          <div className="w-64 bg-white shadow-xl p-4">
             <h2 className="text-lg font-bold mb-4">Admin Menu</h2>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={() => {
                   navigate("/admin/categories");
                   setMenuOpen(false);
                 }}
-                className="text-left p-2 hover:bg-gray-100 rounded"
+                className="flex items-center gap-3 p-3 rounded hover:bg-gray-100"
               >
+                <Boxes size={18} />
                 Categories
               </button>
 
               <button
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  navigate("/login");
-                }}
-                className="text-left p-2 hover:bg-gray-100 rounded"
+                onClick={logout}
+                className="flex items-center gap-3 p-3 rounded hover:bg-red-50 text-red-600"
               >
+                <LogOut size={18} />
                 Logout
               </button>
             </div>
@@ -69,37 +75,52 @@ function AdminLayout() {
         <Outlet />
       </div>
 
-      {/* BOTTOM NAV */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2">
+      {/* BOTTOM NAVBAR */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 shadow">
         <button
           onClick={() => navigate("/admin")}
-          className="flex flex-col items-center text-xs"
+          className={`flex flex-col items-center text-xs ${
+            isActive("/admin") ? "text-red-600" : "text-gray-600"
+          }`}
         >
-          <LayoutDashboard size={20} />
+          <LayoutDashboard size={22} />
           Dashboard
         </button>
 
         <button
           onClick={() => navigate("/admin/products")}
-          className="flex flex-col items-center text-xs"
+          className={`flex flex-col items-center text-xs ${
+            isActive("/admin/products") ? "text-red-600" : "text-gray-600"
+          }`}
         >
-          <Package size={20} />
+          <Package size={22} />
           Products
         </button>
 
         <button
           onClick={() => navigate("/admin/orders")}
-          className="flex flex-col items-center text-xs"
+          className={`flex flex-col items-center text-xs ${
+            isActive("/admin/orders") ? "text-red-600" : "text-gray-600"
+          }`}
         >
-          <ShoppingCart size={20} />
+          <ShoppingCart size={22} />
           Orders
+        </button>
+        <button
+          onClick={() => navigate("/admin/payments")}
+          className={`flex flex-col items-center text-xs ${
+            isActive("/admin/payments") ? "text-red-600" : "text-gray-600"
+          }`}
+        >
+          <CreditCard size={22} />
+          Payments
         </button>
 
         <button
           onClick={logout}
-          className="flex flex-col items-center text-xs text-red-500"
+          className="flex flex-col items-center text-xs text-red-600"
         >
-          <LogOut size={20} />
+          <LogOut size={22} />
           Logout
         </button>
       </div>
