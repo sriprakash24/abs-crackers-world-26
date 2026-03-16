@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>ABS Catalog</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+        /* Page design for A4 */
+
+        body{
+            background: linear-gradient(to bottom, #ffffff, #fff6f0);
+        }
+
+        /* page container */
+
+        .catalog-page{
+            width: 794px;      /* A4 width for PDF */
+            margin:auto;
+            background:white;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0 0 10px rgba(0,0,0,0.08);
+            position:relative;
+        }
+
+        /* watermark logo */
+
+        .watermark{
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            opacity:0.05;
+            width:450px;
+            pointer-events:none;
+        }
+
+        /* header */
+
+        .catalog-header{
+            text-align:center;
+            margin-bottom:40px;
+        }
+
+        .catalog-title{
+            font-size:38px;
+            font-weight:bold;
+            color:#ff6a00;
+        }
+
+        .catalog-subtitle{
+            color:#555;
+        }
+
+        /* category */
+
+        .category-title{
+            font-size:24px;
+            font-weight:bold;
+            color:#ff6a00;
+            border-bottom:2px solid #ff6a00;
+            margin-bottom:20px;
+            padding-bottom:5px;
+        }
+
+        /* product card */
+
+        .product-card{
+    background:#ffffff;
+    border-radius:10px;
+    box-shadow:0 4px 8px rgba(0,0,0,0.05);
+    padding:15px;
+    text-align:center;
+
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+        /* footer */
+
+        .catalog-footer{
+            margin-top:40px;
+            text-align:center;
+            font-size:12px;
+            color:#777;
+            border-top:1px solid #eee;
+            padding-top:15px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="catalog-page">
+
+    <!-- watermark -->
+
+    <img src="/logo.png" class="watermark">
+
+
+    <!-- header -->
+
+    <div class="catalog-header">
+
+        <img src="/logo.png" class="mx-auto w-28 mb-3">
+
+        <div class="catalog-title">
+            ABS CRACKERS WORLD
+        </div>
+
+        <div class="catalog-subtitle">
+            Festival Fireworks Store - 365 days
+        </div>
+
+    </div>
+
+
+    <div id="catalogContainer"></div>
+
+
+    <div class="catalog-footer">
+
+        <div>ABS Crackers World</div>
+
+        <div>365 Days Customer Support</div>
+
+        <div>www.abscrackersworld.com</div>
+
+    </div>
+
+</div>
+
+
+
+<script src="common.js"></script>
+
+<script>
+
+    async function loadCatalog(){
+
+        const response = await apiRequest("/admin/catalog/data?type=retail");
+
+        if(!response.ok){
+            alert("Failed to load catalog");
+            return;
+        }
+
+        const data = await response.json();
+
+        const container = document.getElementById("catalogContainer");
+
+        container.innerHTML = "";
+
+        for(const category in data){
+
+            let html = `
+            <div class="mb-12">
+
+            <div class="category-title">
+            ${category}
+            </div>
+
+            <div class="grid grid-cols-3 gap-6">
+            `;
+
+            data[category].forEach(product => {
+
+                html += `
+                <div class="product-card">
+
+                <img src="${product.image}" class="h-32 mx-auto object-contain mb-2">
+
+                <div class="font-semibold">
+                ${product.name}
+                </div>
+
+                <div class="text-gray-500 text-sm line-through">
+                MRP ₹${product.mrp}
+                </div>
+
+                <div class="text-orange-600 font-bold text-lg">
+                Rs ₹${product.price}
+                </div>
+
+                </div>
+                `;
+            });
+
+            html += "</div></div>";
+
+            container.innerHTML += html;
+        }
+
+    }
+
+    loadCatalog();
+
+</script>
+
+</body>
+</html>

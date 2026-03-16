@@ -12,6 +12,16 @@
 
 <br><br>
 
+<h3>Catalog Test</h3>
+
+
+<button onclick="testRetailCatalog()">Test Retail Catalog</button>
+<button onclick="testWholesaleCatalog()">Test Wholesale Catalog</button>
+
+<pre id="catalogResult" style="background:#f5f5f5;padding:10px;margin-top:10px;"></pre>
+
+<br><br>
+
 <div id="ordersContainer"></div>
 
 <script src="common.js"></script>
@@ -65,6 +75,36 @@
             container.innerHTML += html;
         });
     }
+
+    async function testRetailCatalog() {
+
+    const response = await apiRequest("/admin/catalog/data?type=retail");
+
+    if (!response.ok) {
+        alert("Failed to load retail catalog");
+        return;
+    }
+
+    const data = await response.json();
+
+    document.getElementById("catalogResult").textContent =
+        JSON.stringify(data, null, 2);
+}
+
+async function testWholesaleCatalog() {
+
+    const response = await apiRequest("/admin/catalog/data?type=wholesale");
+
+    if (!response.ok) {
+        alert("Failed to load wholesale catalog");
+        return;
+    }
+
+    const data = await response.json();
+
+    document.getElementById("catalogResult").textContent =
+        JSON.stringify(data, null, 2);
+}
 
 <!--    async function verifyPayment(id) {-->
 
