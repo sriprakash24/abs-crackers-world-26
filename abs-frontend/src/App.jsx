@@ -23,6 +23,9 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 import PaymentPage from "./pages/PaymentPage";
+import AdminPacking from "./pages/admin/AdminPacking";
+import AdminShipping from "./pages/admin/AdminShipping";
+import AdminStock from "./pages/admin/AdminStock";
 
 function App() {
   return (
@@ -56,6 +59,9 @@ function App() {
         <Route path="products/add" element={<AdminAddProduct />} />
         <Route path="/admin/categories" element={<AdminCategories />} />
         <Route path="payments" element={<AdminPayments />} />
+        <Route path="/admin/packing/:id" element={<AdminPacking />} />
+        <Route path="/admin/shipping/:id" element={<AdminShipping />} />
+        <Route path="/admin/stock" element={<AdminStock />} />
       </Route>
     </Routes>
   );

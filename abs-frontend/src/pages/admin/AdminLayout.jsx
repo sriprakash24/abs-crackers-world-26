@@ -107,13 +107,13 @@ function AdminLayout() {
           Orders
         </button>
         <button
-          onClick={() => navigate("/admin/payments")}
+          onClick={() => navigate("/admin/stock")}
           className={`flex flex-col items-center text-xs ${
-            isActive("/admin/payments") ? "text-red-600" : "text-gray-600"
+            isActive("/admin/stock") ? "text-red-600" : "text-gray-600"
           }`}
         >
-          <CreditCard size={22} />
-          Payments
+          <Boxes size={22} />
+          Stock
         </button>
 
         <button

@@ -102,6 +102,7 @@ public class OrderService {
                     .order(order)
                     .product(product)
                     .quantity(cartItem.getQuantity())
+                    .packedQuantity(0)
                     .mrp(mrp)
                     .sellingPrice(sellingPrice)
                     .totalPrice(totalPrice)
@@ -268,11 +269,13 @@ public class OrderService {
                 .findFirst()
                 .orElseThrow(() -> new ValidationException("Product not part of order"));
 
-        if (item.getPackedQuantity() + packQuantity > item.getQuantity()) {
+        Integer currentPacked = item.getPackedQuantity() == null ? 0 : item.getPackedQuantity();
+
+        if (currentPacked + packQuantity > item.getQuantity()) {
             throw new ValidationException("Packing exceeds ordered quantity");
         }
 
-        item.setPackedQuantity(item.getPackedQuantity() + packQuantity);
+        item.setPackedQuantity(currentPacked + packQuantity);
 
         updateOrderPackingStatus(order);
 
@@ -286,11 +289,13 @@ public class OrderService {
 
         for (OrderItem item : order.getItems()) {
 
-            if (item.getPackedQuantity() > 0) {
+            Integer packed = item.getPackedQuantity() == null ? 0 : item.getPackedQuantity();
+
+            if (packed > 0) {
                 anyPacked = true;
             }
 
-            if (!item.getPackedQuantity().equals(item.getQuantity())) {
+            if (!packed.equals(item.getQuantity())) {
                 allPacked = false;
             }
         }
@@ -304,6 +309,17 @@ public class OrderService {
         }
 
         order.setUpdatedAt(LocalDateTime.now());
+    }
+
+    public Order getOrderById(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // Force load items to avoid lazy loading issues
+        order.getItems().size();
+
+        return order;
     }
 
     public void shipOrder(Long orderId,

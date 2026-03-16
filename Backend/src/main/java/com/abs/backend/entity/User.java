@@ -1,5 +1,6 @@
 package com.abs.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class User extends BaseEntity {
     @Column(unique = true)
     private String phone;
 
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

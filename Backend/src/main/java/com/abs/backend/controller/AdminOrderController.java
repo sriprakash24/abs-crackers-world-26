@@ -20,6 +20,12 @@ public class AdminOrderController {
         return orderService.getAllOrders();
     }
 
+    // GET SINGLE ORDER (Needed for Packing Page)
+    @GetMapping("/{orderId}")
+    public Order getOrderById(@PathVariable Long orderId) {
+        return orderService.getOrderById(orderId);
+    }
+
     @PostMapping("/{orderId}/verify")
     public String verifyPayment(@PathVariable Long orderId) {
 

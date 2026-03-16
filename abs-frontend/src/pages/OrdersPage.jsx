@@ -88,75 +88,82 @@ function OrdersPage() {
           {orders.map((order) => (
             <div
               key={order.orderId}
-              className="bg-white rounded-2xl shadow-md p-5 border border-gray-100 hover:shadow-xl hover:-translate-y-[2px] transition-all"
+              className="relative bg-white rounded-3xl shadow-lg border border-orange-100 p-5 overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1"
             >
+              {/* Decorative gradient */}
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-500 via-orange-400 to-yellow-400"></div>
+
               {/* HEADER */}
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-orange-100 p-2 rounded-xl">
+                    <Package className="text-orange-600" size={20} />
+                  </div>
 
-              <div className="flex justify-between items-center mb-3">
-                <div className="flex items-center gap-2">
-                  <Package className="text-red-500" />
-
-                  <h3 className="font-semibold text-gray-800">
-                    Order #{order.orderNumber}
-                  </h3>
+                  <div>
+                    <p className="text-xs text-gray-400">Order Number</p>
+                    <h3 className="font-bold text-gray-800 text-sm">
+                      #{order.orderNumber}
+                    </h3>
+                  </div>
                 </div>
 
                 <span
-                  className={`text-[11px] px-3 py-1 rounded-full font-semibold ${statusColor(order.orderStatus)}`}
+                  className={`text-xs px-3 py-1 rounded-full font-semibold ${statusColor(
+                    order.orderStatus,
+                  )}`}
                 >
                   {order.orderStatus}
                 </span>
               </div>
 
-              {/* ORDER DETAILS */}
+              {/* ORDER META */}
 
-              <div className="grid grid-cols-2 gap-y-2 gap-x-6 text-sm text-gray-700 mt-3">
-                <div>
-                  <span className="text-gray-500">Order ID</span>
-                  <p className="font-semibold">{order.orderId}</p>
+              <div className="grid grid-cols-3 gap-3 text-center mb-4">
+                <div className="bg-red-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-500">Items</p>
+                  <p className="font-bold text-red-500 text-lg">
+                    {order.items.length}
+                  </p>
                 </div>
 
-                <div>
-                  <span className="text-gray-500">Items</span>
-                  <p className="font-semibold">{order.items.length}</p>
-                </div>
-
-                <div>
-                  <span className="text-gray-500">Amount</span>
-                  <p className="font-semibold text-red-600">
+                <div className="bg-yellow-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-500">Amount</p>
+                  <p className="font-bold text-yellow-600 text-lg">
                     ₹{order.totalAmount}
                   </p>
                 </div>
 
-                <div>
-                  <span className="text-gray-500">Payment</span>
-                  <p>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${paymentColor(order.paymentStatus)}`}
-                    >
-                      {order.paymentStatus}
-                    </span>
-                  </p>
+                <div className="bg-green-50 rounded-xl p-3">
+                  <p className="text-xs text-gray-500">Payment</p>
+
+                  <span
+                    className={`text-[11px] px-2 py-1 rounded-full font-semibold ${paymentColor(
+                      order.paymentStatus,
+                    )}`}
+                  >
+                    {order.paymentStatus}
+                  </span>
                 </div>
               </div>
 
-              {/* ACTIONS */}
+              {/* ACTION BUTTONS */}
 
-              <div className="flex flex-wrap gap-3 mt-5">
+              <div className="flex gap-2 flex-wrap">
                 <button
                   onClick={() => setSelectedOrder(order)}
-                  className="flex items-center gap-1 text-sm px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                  className="flex items-center gap-1 text-xs px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
                 >
-                  <Eye size={16} />
-                  View Items
+                  <Eye size={14} />
+                  Items
                 </button>
 
                 {order.paymentStatus === "PENDING" && (
                   <button
                     onClick={() => navigate(`/payment/${order.orderId}`)}
-                    className="flex items-center gap-1 text-sm px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                    className="flex items-center gap-1 text-xs px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                   >
-                    <CreditCard size={16} />
+                    <CreditCard size={14} />
                     Pay Now
                   </button>
                 )}
@@ -169,9 +176,9 @@ function OrdersPage() {
                       generateInvoice(order.orderNumber);
                     }, 300);
                   }}
-                  className="flex items-center gap-1 text-sm px-4 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
+                  className="flex items-center gap-1 text-xs px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
                 >
-                  <FileText size={16} />
+                  <FileText size={14} />
                   Invoice
                 </button>
               </div>

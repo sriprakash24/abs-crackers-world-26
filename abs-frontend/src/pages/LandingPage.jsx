@@ -673,7 +673,13 @@ function LandingPage() {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-2 md:hidden">
         <button
           onClick={() => {
-            if (!isLoggedIn) navigate("/login");
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+              navigate("/login");
+            } else {
+              navigate("/profile");
+            }
           }}
           className="flex flex-col items-center text-red-500 text-xs"
         >
