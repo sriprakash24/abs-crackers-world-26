@@ -55,6 +55,10 @@ import gun from "../assets/categories/sparklers.png";
 import banner from "../assets/banner/diwali-banner.jpg";
 
 import banner1 from "../assets/banner/ban1.png";
+import banner2 from "../assets/banner/ban90.png";
+import banner3 from "../assets/banner/ban2.png";
+import delivery1 from "../assets/banner/del.png";
+import delivery2 from "../assets/banner/del2.png";
 
 import delivery from "../assets/banner/free-delivery.jpg";
 
@@ -83,7 +87,7 @@ function LandingPage() {
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const banners = [banner, delivery, combo]; // add more if needed
+  const banners = [banner3, delivery2, combo]; // add more if needed
 
   const productSectionRef = useRef(null);
   const touchStartX = useRef(0);
@@ -435,11 +439,29 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* BRAND HERO STRIP direct sale added here */}
+      <section className="relative mt-10">
+        {/* IMAGE FULL WIDTH */}
+        <div className="w-full h-[200px] relative overflow-hidden">
+          <img
+            src={banner1} // <-- import this
+            alt="Direct Sale from Sivakasi"
+            className="w-full h-full object-cover"
+          />
+
+          {/* DARK OVERLAY FOR PREMIUM LOOK */}
+          <div className="absolute inset-0 bg-black/10"></div>
+
+          {/* GRADIENT FADE (TOP & BOTTOM BLEND) */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-yellow-100"></div>
+        </div>
+      </section>
+
       {/* DELIVERY + COMBO */}
 
       <section className="grid grid-cols-2 gap-4 px-6 mt-6">
         <div className="bg-white rounded-xl shadow overflow-hidden">
-          <img src={delivery} alt="Free Delivery" />
+          <img src={delivery2} alt="Free Delivery" />
 
           <div className="p-3">
             <h3 className="font-semibold">Free Delivery</h3>
