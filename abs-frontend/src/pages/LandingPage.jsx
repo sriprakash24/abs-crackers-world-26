@@ -74,12 +74,17 @@ function LandingPage() {
 
   const [cartCount, setCartCount] = useState(0);
   const [productsLoading, setProductsLoading] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [moreModalOpen, setMoreModalOpen] = useState(false);
   const menuRef = useRef(null);
   const [userName, setUserName] = useState("");
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const banners = [banner, delivery, combo]; // add more if needed
 
   const productSectionRef = useRef(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
   const selectedIndex = categories.findIndex(
     (c) => c.name === selectedCategory,
@@ -134,6 +139,13 @@ function LandingPage() {
       setIsLoggedIn(false);
     }
   }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [banners.length]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -327,11 +339,23 @@ function LandingPage() {
     }
   };
 
+  function MenuItem({ icon, label, onClick }) {
+    return (
+      <button
+        onClick={onClick}
+        className="flex flex-col items-center gap-2 bg-gray-50 rounded-xl p-3 hover:bg-red-50 transition"
+      >
+        <div className="text-red-500">{icon}</div>
+        <span className="text-xs font-semibold">{label}</span>
+      </button>
+    );
+  }
+
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
+    <div className="bg-gradient-to-br from-red-50 via-orange-50 to-yellow-100 min-h-screen pb-20">
       {/* HEADER */}
 
-      <header className="bg-white shadow sticky top-0 z-50">
+      <header className="bg-white/70 backdrop-blur-md border-b border-orange-100 shadow-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
           {/* LOGO ONLY */}
           <div className="flex items-center cursor-pointer">
@@ -344,164 +368,68 @@ function LandingPage() {
 
           {/* HAMBURGER MENU */}
           <div className="relative">
-            <button onClick={() => setMenuOpen(true)} className="text-red-500">
-              <Menu size={28} />
+            <button
+              onClick={() => navigate("/cart")}
+              className="relative text-red-500"
+            >
+              <ShoppingCart size={26} />
+
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-2 bg-green-500 text-white text-[10px] px-1 rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
       </header>
 
-      {/* SIDEBAR DRAWER */}
-
-      {menuOpen && (
-        <div ref={menuRef} className="fixed inset-0 z-50 flex">
-          {/* BACKDROP */}
-
-          <div
-            className="flex-1 bg-black/40"
-            onClick={() => setMenuOpen(false)}
-          ></div>
-
-          {/* SIDEBAR */}
-
-          <div className="w-64 bg-white h-full shadow-xl p-6 animate-slide-in">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-red-600">Menu</h2>
-
-              <button onClick={() => setMenuOpen(false)}>
-                <X size={24} />
-              </button>
-            </div>
-
-            {/* MENU ITEMS */}
-
-            <div className="flex flex-col">
-              {/* USER HEADER */}
-              {isLoggedIn && (
-                <div className="mb-6 border-b pb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                      <User size={20} className="text-red-600" />
-                    </div>
-
-                    <div>
-                      <p className="font-semibold text-gray-800">
-                        {userName || "Customer"}
-                      </p>
-                      <p className="text-xs text-gray-500">Welcome back</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* HOME */}
-              <button
-                onClick={() => {
-                  navigate("/");
-                  setMenuOpen(false);
-                }}
-                className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-              >
-                <Grid size={18} />
-                Home
-              </button>
-
-              {/* AUTH BASED MENU */}
-              {!isLoggedIn ? (
-                <>
-                  <button
-                    onClick={() => {
-                      navigate("/login");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-                  >
-                    <User size={18} />
-                    Login
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/register");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-                  >
-                    <User size={18} />
-                    Register
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      navigate("/profile");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-                  >
-                    <User size={18} />
-                    Profile
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/orders");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-                  >
-                    <Package size={18} />
-                    Orders
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/about");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-                  >
-                    <Info size={18} />
-                    About Us
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      navigate("/contact");
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 hover:bg-gray-100 rounded-lg"
-                  >
-                    <Phone size={18} />
-                    Contact
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-2 py-3 text-red-500 hover:bg-red-50 rounded-lg"
-                  >
-                    <LogOut size={18} />
-                    Logout
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* BANNER */}
 
       <section className="px-6 mt-6">
-        <img
-          src={banner}
-          alt="Diwali Sale"
-          className="rounded-xl shadow w-full object-cover"
-        />
+        <div className="relative overflow-hidden rounded-3xl shadow-lg">
+          <div
+            className="flex transition-transform duration-500"
+            style={{
+              transform: `translateX(-${currentSlide * 100}%)`,
+            }}
+            onTouchStart={(e) => (touchStartX.current = e.touches[0].clientX)}
+            onTouchEnd={(e) => {
+              touchEndX.current = e.changedTouches[0].clientX;
+
+              if (touchStartX.current - touchEndX.current > 50) {
+                setCurrentSlide((prev) =>
+                  prev === banners.length - 1 ? prev : prev + 1,
+                );
+              }
+
+              if (touchEndX.current - touchStartX.current > 50) {
+                setCurrentSlide((prev) => (prev === 0 ? 0 : prev - 1));
+              }
+            }}
+          >
+            {banners.map((b, index) => (
+              <img
+                key={index}
+                src={b}
+                alt="banner"
+                className="w-full h-44 object-contain flex-shrink-0"
+              />
+            ))}
+          </div>
+
+          {/* DOTS */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+            {banners.map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full ${
+                  currentSlide === i ? "bg-white" : "bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* DELIVERY + COMBO */}
@@ -542,7 +470,7 @@ function LandingPage() {
             <div
               key={index}
               onClick={() => handleCategoryClick(cat.name)}
-              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col items-center justify-between h-48 p-4"
+              className="relative bg-white rounded-3xl shadow-lg border border-orange-100 hover:shadow-2xl transition-all duration-200 cursor-pointer flex flex-col items-center justify-between h-48 p-4 overflow-hidden"
             >
               <img
                 src={categoryImages[cat.name]}
@@ -670,7 +598,7 @@ function LandingPage() {
 
       {/* MOBILE NAV */}
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-inner flex justify-around py-2 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-orange-100 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] flex justify-around py-2 md:hidden">
         <button
           onClick={() => {
             const token = localStorage.getItem("token");
@@ -735,6 +663,14 @@ function LandingPage() {
 
           <span>Categories</span>
         </button>
+        {/* MORE */}
+        <button
+          onClick={() => setMoreModalOpen(true)}
+          className="flex flex-col items-center text-red-500 text-xs"
+        >
+          <Menu size={22} />
+          <span>More</span>
+        </button>
       </nav>
 
       {/* CATEGORY MODAL */}
@@ -785,6 +721,79 @@ function LandingPage() {
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {moreModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-end">
+          {/* BACKDROP */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMoreModalOpen(false)}
+          ></div>
+
+          {/* MODAL */}
+          <div className="relative bg-white w-full rounded-t-3xl shadow-xl p-5 animate-slide-up">
+            {/* HEADER */}
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-red-600">More Options</h3>
+
+              <button onClick={() => setMoreModalOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* MENU GRID */}
+            <div className="grid grid-cols-3 gap-4">
+              <MenuItem
+                icon={<Grid />}
+                label="Home"
+                onClick={() => navigate("/")}
+              />
+
+              {!isLoggedIn ? (
+                <>
+                  <MenuItem
+                    icon={<User />}
+                    label="Login"
+                    onClick={() => navigate("/login")}
+                  />
+                  <MenuItem
+                    icon={<User />}
+                    label="Register"
+                    onClick={() => navigate("/register")}
+                  />
+                </>
+              ) : (
+                <>
+                  <MenuItem
+                    icon={<User />}
+                    label="Profile"
+                    onClick={() => navigate("/profile")}
+                  />
+                  <MenuItem
+                    icon={<Package />}
+                    label="Orders"
+                    onClick={() => navigate("/orders")}
+                  />
+                  <MenuItem
+                    icon={<Info />}
+                    label="About"
+                    onClick={() => navigate("/about")}
+                  />
+                  <MenuItem
+                    icon={<Phone />}
+                    label="Contact"
+                    onClick={() => navigate("/contact")}
+                  />
+                  <MenuItem
+                    icon={<LogOut />}
+                    label="Logout"
+                    onClick={handleLogout}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>

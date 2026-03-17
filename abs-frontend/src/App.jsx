@@ -26,6 +26,7 @@ import PaymentPage from "./pages/PaymentPage";
 import AdminPacking from "./pages/admin/AdminPacking";
 import AdminShipping from "./pages/admin/AdminShipping";
 import AdminStock from "./pages/admin/AdminStock";
+import TrackOrder from "./pages/TrackOrders";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/payment/:orderId" element={<PaymentPage />} />
+      <Route path="/track-order/:orderId" element={<TrackOrder />} />
 
       <Route
         path="/admin"

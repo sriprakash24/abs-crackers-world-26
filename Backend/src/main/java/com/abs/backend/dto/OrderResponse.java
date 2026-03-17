@@ -26,4 +26,10 @@ public class OrderResponse {
     private LocalDateTime createdAt;
 
     private List<OrderItemResponse> items;
+
+    private String trackingId;
+    private String transportName;
+    private String shippingSlipPath;
+    private LocalDateTime shippedAt;
+    private LocalDateTime deliveredAt;
 }

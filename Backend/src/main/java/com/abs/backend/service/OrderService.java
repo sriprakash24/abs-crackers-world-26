@@ -150,6 +150,13 @@ public class OrderService {
                 .totalAmount(order.getTotalAmount())
                 .editable(order.isEditable())
                 .createdAt(order.getCreatedAt())
+                //  ADD (Delivery Tracking)
+                .trackingId(order.getTrackingId())
+                .transportName(order.getTransportName())
+                .shippingSlipPath(order.getShippingSlipPath())
+                .shippedAt(order.getShippedAt())
+                .deliveredAt(order.getDeliveredAt())
+                
                 .items(itemResponses)
                 .build();
     }

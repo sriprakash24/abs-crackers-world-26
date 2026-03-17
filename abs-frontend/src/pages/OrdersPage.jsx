@@ -4,7 +4,14 @@ import API from "../api/api";
 import InvoiceTemplate from "../pages/InvoiceTemplate";
 import { generateInvoice } from "../utils/generateInvoice";
 
-import { Package, CreditCard, FileText, Eye, ArrowLeft } from "lucide-react";
+import {
+  Package,
+  CreditCard,
+  FileText,
+  Eye,
+  ArrowLeft,
+  Truck,
+} from "lucide-react";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -181,6 +188,17 @@ function OrdersPage() {
                   <FileText size={14} />
                   Invoice
                 </button>
+                {/* TRACK ORDER BUTTON */}
+                {(order.orderStatus === "SHIPPED" ||
+                  order.orderStatus === "DELIVERED") && (
+                  <button
+                    onClick={() => navigate(`/track-order/${order.orderId}`)}
+                    className="flex items-center gap-1 text-xs px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition"
+                  >
+                    <Truck size={14} />
+                    Track Order
+                  </button>
+                )}
               </div>
             </div>
           ))}

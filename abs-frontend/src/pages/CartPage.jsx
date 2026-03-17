@@ -188,7 +188,7 @@ function CartPage() {
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-100 p-6 pb-72">
       {/* HEADER */}
 
-      <div className="sticky top-0 z-30 bg-white shadow-sm px-4 py-3 rounded-xl flex items-center justify-between mb-6">
+      <div className="sticky top-0 z-30 bg-white rounded-2xl shadow-md border border-orange-100 px-4 py-3 flex items-center justify-between mb-6">
         <button
           onClick={() => navigate(-1)}
           className="p-2 rounded-full hover:bg-gray-100"
@@ -196,13 +196,13 @@ function CartPage() {
           <ArrowLeft size={22} className="text-red-500" />
         </button>
 
-        <h2 className="text-lg font-bold text-gray-700">Your Cart</h2>
+        <h2 className="text-lg font-bold text-gray-800">Your Cart</h2>
 
         <div className="w-10"></div>
       </div>
 
       {cartItems.length === 0 ? (
-        <div className="flex flex-col items-center justify-center mt-24">
+        <div className="flex flex-col items-center justify-center mt-24 bg-white p-6 rounded-2xl shadow border border-orange-100">
           <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
 
           <button
@@ -221,42 +221,44 @@ function CartPage() {
               {cartItems.map((item) => (
                 <div
                   key={item.productId}
-                  className="bg-white rounded-2xl shadow-md p-4 flex gap-4 items-center"
+                  className="relative bg-white rounded-3xl shadow-lg border border-orange-100 p-4 flex gap-4 items-center overflow-hidden"
                 >
                   <img
                     src={item.imageUrl}
                     alt={item.productName}
-                    className="w-20 h-20 object-contain"
+                    className="w-20 h-20 object-cover rounded-xl border"
                   />
 
                   <div className="flex-1">
                     <p className="font-semibold text-sm">{item.productName}</p>
 
-                    <p className="text-gray-400 text-xs line-through">
+                    <p className="text-xs text-gray-400 line-through">
                       ₹{item.mrp}
                     </p>
 
-                    <p className="text-red-600 font-bold">
+                    <p className="text-red-500 font-bold text-lg">
                       ₹{item.sellingPrice}
                     </p>
 
                     {/* QTY CONTROLLER */}
 
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2 mt-2 bg-gray-100 rounded-lg px-2 py-1 w-fit">
                       <button
                         onClick={() =>
                           decreaseQty(item.productId, item.quantity)
                         }
-                        className="w-7 h-7 bg-gray-200 rounded flex items-center justify-center"
+                        className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-gray-200"
                       >
                         -
                       </button>
 
-                      <span className="font-semibold">{item.quantity}</span>
+                      <span className="font-semibold text-sm w-5 text-center">
+                        {item.quantity}
+                      </span>
 
                       <button
                         onClick={() => increaseQty(item.productId)}
-                        className="w-7 h-7 bg-red-500 text-white rounded flex items-center justify-center"
+                        className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-md hover:bg-red-600"
                       >
                         +
                       </button>
@@ -269,7 +271,7 @@ function CartPage() {
 
                   <button
                     onClick={() => removeItem(item.productId)}
-                    className="text-red-500 text-sm"
+                    className="text-xs bg-red-50 text-red-500 px-3 py-1 rounded-lg hover:bg-red-100 transition"
                   >
                     Remove
                   </button>
@@ -280,7 +282,7 @@ function CartPage() {
 
           {/* BOTTOM SUMMARY */}
 
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-xl px-6 py-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl px-6 py-4 rounded-t-2xl">
             <div className="flex justify-center mb-2">
               <button
                 onClick={() => setShowSummary(!showSummary)}
@@ -309,7 +311,7 @@ function CartPage() {
             <div className="flex justify-between items-center border-t pt-2 mb-3">
               <span className="text-sm font-semibold">Total Amount</span>
 
-              <span className="text-lg font-bold text-red-600">
+              <span className="text-xl font-bold text-red-500">
                 ₹{getTotal()}
               </span>
             </div>
