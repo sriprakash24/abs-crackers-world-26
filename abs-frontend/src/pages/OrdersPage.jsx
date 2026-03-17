@@ -11,6 +11,7 @@ import {
   Eye,
   ArrowLeft,
   Truck,
+  CheckCircle,
 } from "lucide-react";
 
 function OrdersPage() {
@@ -251,6 +252,73 @@ function OrdersPage() {
         }}
       >
         {selectedOrder && <InvoiceTemplate order={selectedOrder} />}
+      </div>
+      <section className="mt-12">
+        <div className="bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 text-white px-6 py-10 space-y-8">
+          {/* ITEM */}
+          <div className="flex gap-4 items-start">
+            <Truck size={28} />
+            <div>
+              <p className="font-semibold text-lg">Timely Delivery</p>
+              <p className="text-sm opacity-90">On-Time Delivery Guaranteed</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start">
+            <Package size={28} />
+            <div>
+              <p className="font-semibold text-lg">Quality Assured</p>
+              <p className="text-sm opacity-90">
+                Made from fine quality raw materials
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start">
+            <CheckCircle size={28} />
+            <div>
+              <p className="font-semibold text-lg">Safety Tested</p>
+              <p className="text-sm opacity-90">
+                All our crackers are quality and safety checked
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start">
+            <Package size={28} />
+            <div>
+              <p className="font-semibold text-lg">
+                Minimum Order - Rs. 3000/-
+              </p>
+              <p className="text-sm opacity-90">
+                Assured Delivery Before Diwali
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* 🔥 STICKY BACK TO HOME BAR */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        {/* background blur layer */}
+        <div className="bg-white/80 backdrop-blur-md border-t border-orange-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          <div
+            onClick={() => navigate("/", { replace: true })}
+            className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between cursor-pointer active:scale-[0.98] transition"
+          >
+            {/* TEXT */}
+            <div>
+              <p className="text-xs text-gray-400">Continue shopping</p>
+              <p className="text-sm font-semibold text-gray-800">
+                Back to Home
+              </p>
+            </div>
+
+            {/* ICON */}
+            <div className="bg-gradient-to-r from-red-500 to-orange-400 p-3 rounded-full shadow-md">
+              <ArrowLeft className="text-white" size={18} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

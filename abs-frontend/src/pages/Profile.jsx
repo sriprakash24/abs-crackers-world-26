@@ -439,6 +439,29 @@ function Profile() {
           </div>
         </div>
       )}
+      {/* 🔥 STICKY BACK TO HOME BAR */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        {/* background blur layer */}
+        <div className="bg-white/80 backdrop-blur-md border-t border-orange-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+          <div
+            onClick={() => navigate("/cart", { replace: true })}
+            className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between cursor-pointer active:scale-[0.98] transition"
+          >
+            {/* TEXT */}
+            <div>
+              <p className="text-xs text-gray-400">Continue shopping</p>
+              <p className="text-sm font-semibold text-gray-800">
+                Back to cart
+              </p>
+            </div>
+
+            {/* ICON */}
+            <div className="bg-gradient-to-r from-red-500 to-orange-400 p-3 rounded-full shadow-md">
+              <ArrowLeft className="text-white" size={18} />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

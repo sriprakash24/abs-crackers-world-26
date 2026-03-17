@@ -11,6 +11,7 @@ import {
   Package,
   Info,
   Phone,
+  CheckCircle,
 } from "lucide-react";
 
 import { useEffect, useState, useRef } from "react";
@@ -52,6 +53,8 @@ import matchBox from "../assets/categories/sparklers.png";
 import gun from "../assets/categories/sparklers.png";
 
 import banner from "../assets/banner/diwali-banner.jpg";
+
+import banner1 from "../assets/banner/ban1.png";
 
 import delivery from "../assets/banner/free-delivery.jpg";
 
@@ -386,7 +389,7 @@ function LandingPage() {
 
       {/* BANNER */}
 
-      <section className="px-6 mt-6">
+      <section className="mt-4">
         <div className="relative overflow-hidden rounded-3xl shadow-lg">
           <div
             className="flex transition-transform duration-500"
@@ -595,6 +598,151 @@ function LandingPage() {
           ))}
         </div>
       </section>
+
+      <section className="mt-12">
+        <div className="bg-gradient-to-br from-orange-500 via-red-500 to-orange-600 text-white px-6 py-10 space-y-8">
+          {/* ITEM */}
+          <div className="flex gap-4 items-start">
+            <Truck size={28} />
+            <div>
+              <p className="font-semibold text-lg">Timely Delivery</p>
+              <p className="text-sm opacity-90">On-Time Delivery Guaranteed</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start">
+            <Package size={28} />
+            <div>
+              <p className="font-semibold text-lg">Quality Assured</p>
+              <p className="text-sm opacity-90">
+                Made from fine quality raw materials
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start">
+            <CheckCircle size={28} />
+            <div>
+              <p className="font-semibold text-lg">Safety Tested</p>
+              <p className="text-sm opacity-90">
+                All our crackers are quality and safety checked
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-start">
+            <Package size={28} />
+            <div>
+              <p className="font-semibold text-lg">
+                Minimum Order - Rs. 3000/-
+              </p>
+              <p className="text-sm opacity-90">
+                Assured Delivery Before Diwali
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+
+      <footer className="relative bg-gradient-to-br from-gray-900 via-gray-950 to-black text-gray-300 px-6 pt-12 pb-24 mt-12">
+        {/* TOP GLOW LINE */}
+        <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-red-500 via-orange-400 to-yellow-400"></div>
+
+        {/* BRAND */}
+        <div className="mb-8">
+          <h2 className="text-white text-xl font-bold tracking-wide">
+            ABS Crackers World
+          </h2>
+          <p className="text-sm text-gray-400 mt-2 leading-relaxed">
+            Premium quality crackers with safe and reliable delivery across
+            Tamil Nadu.
+          </p>
+        </div>
+
+        {/* GRID */}
+        <div className="grid grid-cols-2 gap-8 text-sm">
+          {/* QUICK LINKS */}
+          <div>
+            <p className="text-white font-semibold mb-3">Quick Links</p>
+            <ul className="space-y-2">
+              <li
+                onClick={() => navigate("/")}
+                className="hover:text-white cursor-pointer transition"
+              >
+                Home
+              </li>
+              <li
+                onClick={() => navigate("/orders")}
+                className="hover:text-white cursor-pointer transition"
+              >
+                Orders
+              </li>
+              <li
+                onClick={() => navigate("/profile")}
+                className="hover:text-white cursor-pointer transition"
+              >
+                Profile
+              </li>
+            </ul>
+          </div>
+
+          {/* SUPPORT */}
+          <div>
+            <p className="text-white font-semibold mb-3">Support</p>
+            <ul className="space-y-2">
+              <li
+                onClick={() => navigate("/about")}
+                className="hover:text-white cursor-pointer transition"
+              >
+                About Us
+              </li>
+              <li
+                onClick={() => navigate("/contact")}
+                className="hover:text-white cursor-pointer transition"
+              >
+                Contact
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* CONTACT */}
+        <div className="mt-8 text-sm space-y-2">
+          <p className="text-white font-semibold">Contact</p>
+          <p>📞 +91 XXXXX XXXXX</p>
+          <p>📍 Sivakasi, Tamil Nadu</p>
+        </div>
+
+        {/* SOCIAL */}
+        <div className="mt-6 flex gap-4">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-500 transition cursor-pointer">
+            <svg
+              className="w-5 h-5 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm5 5a5 5 0 110 10 5 5 0 010-10zm6.5-.75a1.25 1.25 0 11-2.5 0 1.25 1.25 0 012.5 0z" />
+            </svg>
+          </div>
+
+          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-500 transition cursor-pointer">
+            <svg
+              className="w-5 h-5 text-white"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M23.5 6.2s-.2-1.6-.8-2.3c-.7-.8-1.5-.8-1.9-.9C17.7 2.7 12 2.7 12 2.7h0s-5.7 0-8.8.3c-.4.1-1.2.1-1.9.9C.7 4.6.5 6.2.5 6.2S.3 8 .3 9.7v1.6C.3 13 .5 14.8.5 14.8s.2 1.6.8 2.3c.7.8 1.6.8 2 .9 1.5.1 6.7.3 6.7.3s5.7 0 8.8-.3c.4-.1 1.2-.1 1.9-.9.6-.7.8-2.3.8-2.3s.2-1.8.2-3.5V9.7c0-1.7-.2-3.5-.2-3.5zM9.7 14.3V7.7l6.4 3.3-6.4 3.3z" />
+            </svg>
+          </div>
+        </div>
+
+        {/* DIVIDER */}
+        <div className="border-t border-gray-800 mt-8 pt-4 text-center text-xs text-gray-500">
+          © {new Date().getFullYear()} ABS Crackers World. All rights reserved.
+        </div>
+      </footer>
 
       {/* MOBILE NAV */}
 

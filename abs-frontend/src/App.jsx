@@ -27,6 +27,8 @@ import AdminPacking from "./pages/admin/AdminPacking";
 import AdminShipping from "./pages/admin/AdminShipping";
 import AdminStock from "./pages/admin/AdminStock";
 import TrackOrder from "./pages/TrackOrders";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -46,6 +48,8 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/payment/:orderId" element={<PaymentPage />} />
       <Route path="/track-order/:orderId" element={<TrackOrder />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
 
       <Route
         path="/admin"
