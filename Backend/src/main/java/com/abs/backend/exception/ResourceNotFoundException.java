@@ -6,4 +6,9 @@ public class ResourceNotFoundException extends BusinessException {
         super(ErrorCode.PRODUCT_NOT_FOUND,
                 resource + " not found");
     }
+
+    // ✅ NEW (for Category and future modules)
+    public ResourceNotFoundException(ErrorCode errorCode, String resource) {
+        super(errorCode, resource + " not found");
+    }
 }

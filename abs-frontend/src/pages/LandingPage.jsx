@@ -204,7 +204,7 @@ function LandingPage() {
 
   const loadCategories = async () => {
     try {
-      const res = await API.get("/categories");
+      const res = await API.get("/categories/active");
 
       setCategories(res.data);
     } catch (error) {

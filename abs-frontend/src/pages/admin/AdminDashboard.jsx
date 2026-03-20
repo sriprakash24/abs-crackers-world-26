@@ -2,19 +2,25 @@ import { useEffect, useState } from "react";
 import API from "../../api/api";
 import { ShoppingCart, Clock, PackageCheck, IndianRupee } from "lucide-react";
 
-function StatCard({ icon: Icon, title, value, color }) {
+function StatCard({ icon: Icon, title, value, gradient }) {
   return (
-    <div className="bg-white rounded-xl shadow p-4 flex items-center gap-3">
-      <div className={`p-3 rounded-lg ${color}`}>
-        <Icon size={22} />
+    <div
+      className={`relative overflow-hidden rounded-2xl p-5 text-white shadow-lg ${gradient}`}
+    >
+      <div className="absolute right-3 top-3 opacity-20">
+        <Icon size={60} />
       </div>
 
-      <div>
-        <p className="text-gray-500 text-xs">{title}</p>
-        <h2 className="text-lg font-bold">{value}</h2>
+      <div className="relative z-10">
+        <p className="text-sm opacity-80">{title}</p>
+        <h2 className="text-2xl font-bold mt-1">{value}</h2>
       </div>
     </div>
   );
+}
+
+function SkeletonCard() {
+  return <div className="bg-gray-200 animate-pulse h-24 rounded-2xl"></div>;
 }
 
 function AdminDashboard() {
@@ -66,49 +72,55 @@ function AdminDashboard() {
     setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <div className="text-center py-10 text-gray-500">
-        Loading dashboard...
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-bold">Dashboard</h2>
-
-      {/* STATS GRID */}
-
-      <div className="grid grid-cols-2 gap-3">
-        <StatCard
-          icon={Clock}
-          title="Pending Payments"
-          value={stats.pendingPayments}
-          color="bg-yellow-100"
-        />
-
-        <StatCard
-          icon={ShoppingCart}
-          title="Processing"
-          value={stats.processingOrders}
-          color="bg-blue-100"
-        />
-
-        <StatCard
-          icon={PackageCheck}
-          title="Ready To Ship"
-          value={stats.readyToShip}
-          color="bg-green-100"
-        />
-
-        <StatCard
-          icon={IndianRupee}
-          title="Revenue"
-          value={`₹${stats.revenue}`}
-          color="bg-red-100"
-        />
+    <div className="p-5 space-y-6 bg-gray-50 min-h-screen">
+      {/* HEADER */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+        <p className="text-gray-500 text-sm">
+          Monitor your business performance
+        </p>
       </div>
+
+      {/* STATS */}
+      {loading ? (
+        <div className="grid grid-cols-2 gap-4">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4">
+          <StatCard
+            icon={Clock}
+            title="Pending Payments"
+            value={stats.pendingPayments}
+            gradient="bg-gradient-to-r from-yellow-400 to-yellow-500"
+          />
+
+          <StatCard
+            icon={ShoppingCart}
+            title="Processing Orders"
+            value={stats.processingOrders}
+            gradient="bg-gradient-to-r from-blue-500 to-indigo-600"
+          />
+
+          <StatCard
+            icon={PackageCheck}
+            title="Ready To Ship"
+            value={stats.readyToShip}
+            gradient="bg-gradient-to-r from-green-500 to-emerald-600"
+          />
+
+          <StatCard
+            icon={IndianRupee}
+            title="Total Revenue"
+            value={`₹${stats.revenue.toLocaleString()}`}
+            gradient="bg-gradient-to-r from-pink-500 to-red-500"
+          />
+        </div>
+      )}
     </div>
   );
 }

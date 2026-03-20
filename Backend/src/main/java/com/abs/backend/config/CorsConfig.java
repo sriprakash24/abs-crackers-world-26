@@ -24,7 +24,7 @@ public class CorsConfig {
 
         config.setAllowedOrigins(List.of("http://localhost:5173", "https://abs-crackers-world-26.vercel.app"));
 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 
         config.setAllowedHeaders(List.of("*"));
 

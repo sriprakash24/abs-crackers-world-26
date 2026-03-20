@@ -17,6 +17,7 @@ function AdminProducts() {
     categoryId: "",
     mrp: "",
     retailDiscountPercent: "",
+    sellingPrice: "", // ✅ NEW
     stockBoxes: "",
     imageUrl: "",
   });
@@ -84,21 +85,51 @@ function AdminProducts() {
     }
   };
 
+  // const handleChange = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    let updated = { ...formData, [name]: value };
+
+    const mrp = Number(updated.mrp);
+
+    // ✅ If discount changes → update selling price
+    if (name === "retailDiscountPercent") {
+      const discount = Number(value);
+      if (mrp && discount) {
+        updated.sellingPrice = (mrp - (mrp * discount) / 100).toFixed(2);
+      }
+    }
+
+    // ✅ If selling price changes → update discount %
+    if (name === "sellingPrice") {
+      const sp = Number(value);
+      if (mrp && sp) {
+        updated.retailDiscountPercent = (((mrp - sp) / mrp) * 100).toFixed(2);
+      }
+    }
+
+    setFormData(updated);
   };
 
   const calculatePrice = () => {
-    const mrp = Number(formData.mrp);
-    const discount = Number(formData.retailDiscountPercent);
-
-    if (!mrp || !discount) return 0;
-
-    return mrp - (mrp * discount) / 100;
+    return formData.sellingPrice || 0;
   };
+
+  // const calculatePrice = () => {
+  //   const mrp = Number(formData.mrp);
+  //   const discount = Number(formData.retailDiscountPercent);
+
+  //   if (!mrp || !discount) return 0;
+
+  //   return mrp - (mrp * discount) / 100;
+  // };
 
   const saveProduct = async () => {
     try {
@@ -189,6 +220,7 @@ function AdminProducts() {
                             "",
                           mrp: p.mrp,
                           retailDiscountPercent: p.retailDiscountPercent || "",
+                          sellingPrice: p.sellingPrice || "", // ✅ ADD THIS
                           stockBoxes: p.stock || "",
                           imageUrl: p.imageUrl,
                         });
@@ -274,6 +306,15 @@ function AdminProducts() {
               value={formData.retailDiscountPercent}
               onChange={handleChange}
               placeholder="Retail Discount %"
+              type="number"
+              className="w-full border p-2 rounded"
+            />
+
+            <input
+              name="sellingPrice"
+              value={formData.sellingPrice}
+              onChange={handleChange}
+              placeholder="Selling Price"
               type="number"
               className="w-full border p-2 rounded"
             />
