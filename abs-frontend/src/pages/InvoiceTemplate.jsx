@@ -125,11 +125,6 @@ function InvoiceTemplate({ order }) {
             <span>₹{order.totalAmount}</span>
           </div>
 
-          <div className="flex justify-between text-sm mb-2">
-            <span>Shipping</span>
-            <span>Free</span>
-          </div>
-
           <div className="flex justify-between font-bold text-lg border-t pt-2">
             <span>Total</span>
 
