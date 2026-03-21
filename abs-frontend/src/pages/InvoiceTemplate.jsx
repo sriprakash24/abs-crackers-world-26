@@ -13,9 +13,10 @@ function InvoiceTemplate({ order }) {
           <div>
             <h1 className="text-xl font-bold text-red-600">ABS Crackers</h1>
 
+            <p className="text-xs text-gray-500">Chinnakamanpatti</p>
             <p className="text-xs text-gray-500">Sivakasi, Tamil Nadu</p>
 
-            <p className="text-xs text-gray-500">Phone: +91 9876543210</p>
+            <p className="text-xs text-gray-500">Phone: +91 9597189599</p>
 
             <p className="text-xs text-gray-500">
               Email: support@abscrackers.com
