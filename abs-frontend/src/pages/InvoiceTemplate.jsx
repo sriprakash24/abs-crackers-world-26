@@ -65,163 +65,26 @@ function InvoiceTemplate({ order }) {
   const itemCount = order.items?.reduce((s, i) => s + i.quantity, 0) ?? 0;
 
   return (
-    <>
-      <style>{invoiceCss}</style>
+    <div id="invoice-content" className="bg-white text-gray-800 p-8 w-[800px]">
+      {/* HEADER */}
 
-      {/* ── OUTER WRAPPER ── */}
-      <div
-        id="invoice-content"
-        className="inv-root"
-        style={{
-          width: 820,
-          background: "#ffffff",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* ══════════════════════════════════════════
-            DECORATIVE BACKGROUND GEOMETRY
-        ══════════════════════════════════════════ */}
-        {/* top-left diagonal block */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 320,
-            height: 180,
-            background:
-              "linear-gradient(135deg, #7f1d1d 0%, #b91c1c 60%, transparent 100%)",
-            clipPath: "polygon(0 0, 100% 0, 70% 100%, 0 100%)",
-            zIndex: 0,
-          }}
-        />
-        {/* gold rule — top */}
-        <div
-          style={{
-            position: "absolute",
-            top: 180,
-            left: 0,
-            right: 0,
-            height: 2,
-            background:
-              "linear-gradient(90deg, #ca8a04, #fbbf24 40%, #ca8a04 70%, transparent)",
-            zIndex: 1,
-          }}
-        />
-        {/* bottom-right corner accent */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: 0,
-            width: 200,
-            height: 140,
-            background:
-              "linear-gradient(315deg, #7f1d1d 0%, #b91c1c 50%, transparent 100%)",
-            clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
-            zIndex: 0,
-            opacity: 0.7,
-          }}
-        />
-        {/* subtle dot-grid watermark */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "radial-gradient(circle, rgba(202,138,4,0.07) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            zIndex: 0,
-            pointerEvents: "none",
-          }}
-        />
+      <div className="flex justify-between items-center border-b pb-4">
+        <div className="flex items-center gap-3">
+          <img src={logo} className="h-14" />
 
-        {/* ══════════════════════════════════════════
-            CONTENT WRAPPER
-        ══════════════════════════════════════════ */}
-        <div style={{ position: "relative", zIndex: 2 }}>
-          {/* ── HEADER ── */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "32px 40px 28px",
-              minHeight: 160,
-            }}
-          >
-            {/* Brand block — sits over the crimson diagonal */}
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <div
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 14,
-                  background: "rgba(255,255,255,0.15)",
-                  backdropFilter: "blur(6px)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1.5px solid rgba(255,255,255,0.3)",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-                }}
-              >
-                <img
-                  src={logo}
-                  alt="ABS Crackers"
-                  style={{ width: 44, height: 44, objectFit: "contain" }}
-                />
-              </div>
-              <div>
-                <p
-                  className="inv-serif"
-                  style={{
-                    fontSize: 26,
-                    fontWeight: 700,
-                    color: "#ffffff",
-                    lineHeight: 1,
-                    letterSpacing: "-0.5px",
-                  }}
-                >
-                  ABS Crackers
-                </p>
-                <p
-                  style={{
-                    fontSize: 11,
-                    color: "rgba(255,255,255,0.75)",
-                    marginTop: 4,
-                    letterSpacing: "0.3px",
-                  }}
-                >
-                  Sivakasi, Tamil Nadu
-                </p>
-                <div style={{ display: "flex", gap: 14, marginTop: 5 }}>
-                  <span
-                    style={{
-                      fontSize: 10,
-                      color: "rgba(255,255,255,0.6)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                    }}
-                  >
-                    <Phone size={9} /> +91 9876543210
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 10,
-                      color: "rgba(255,255,255,0.6)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                    }}
-                  >
-                    <Mail size={9} /> support@abscrackers.com
-                  </span>
-                </div>
-              </div>
-            </div>
+          <div>
+            <h1 className="text-xl font-bold text-red-600">ABS Crackers</h1>
+
+            <p className="text-xs text-gray-500">Chinnakamanpatti</p>
+            <p className="text-xs text-gray-500">Sivakasi, Tamil Nadu</p>
+
+            <p className="text-xs text-gray-500">Phone: +91 9597189599</p>
+
+            <p className="text-xs text-gray-500">
+              Email: support@abscrackers.com
+            </p>
+          </div>
+        </div>
 
             {/* Invoice label */}
             <div style={{ textAlign: "right" }}>
@@ -722,83 +585,6 @@ function InvoiceTemplate({ order }) {
                 <div style={{ textAlign: "center" }}>
                   <span style={{ fontSize: 10, color: "#78716c" }}>₹0</span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── TOTALS BLOCK ── */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              padding: "0 40px 36px",
-            }}
-          >
-            <div
-              style={{
-                width: 260,
-                border: "1px solid rgba(202,138,4,0.2)",
-                borderRadius: 18,
-                overflow: "hidden",
-                boxShadow: "0 4px 20px rgba(24,18,10,0.07)",
-              }}
-            >
-              {/* rows */}
-              {[
-                { label: "Subtotal", val: `₹${subtotal}`, muted: true },
-                { label: "Shipping", val: "Free", muted: true },
-                { label: "Discount", val: "—", muted: true },
-              ].map((row) => (
-                <div
-                  key={row.label}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "10px 16px",
-                    borderBottom: "1px solid rgba(202,138,4,0.08)",
-                  }}
-                >
-                  <span style={{ fontSize: 13, color: "#78716c" }}>
-                    {row.label}
-                  </span>
-                  <span
-                    style={{ fontSize: 13, fontWeight: 500, color: "#3d2f1e" }}
-                  >
-                    {row.val}
-                  </span>
-                </div>
-              ))}
-              {/* grand total */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "14px 16px",
-                  background: "linear-gradient(135deg,#18120a,#3d2f1e)",
-                }}
-              >
-                <span
-                  className="inv-serif"
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 600,
-                    color: "rgba(255,255,255,0.8)",
-                  }}
-                >
-                  Grand Total
-                </span>
-                <span
-                  className="inv-serif"
-                  style={{
-                    fontSize: 22,
-                    fontWeight: 700,
-                    color: "#fbbf24",
-                    letterSpacing: "-0.5px",
-                  }}
-                >
-                  ₹{order.totalAmount}
-                </span>
               </div>
             </div>
           </div>
