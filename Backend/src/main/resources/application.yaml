@@ -1,18 +1,22 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db.hodcnzcdjrsjwriumrrd.supabase.co:5432/postgres?sslmode=require
-    username: postgres
+    url: jdbc:mysql://localhost:3306/abs_ecommerce
+    username: root
     password: Dheeran1212#
 
   jpa:
     hibernate:
-      ddl-auto: none
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
-  logging:
-    level:
-      org.hibernate.SQL: DEBUG
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: 8080
