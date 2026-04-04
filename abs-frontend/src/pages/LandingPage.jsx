@@ -31,6 +31,8 @@ import rocket from "../assets/categories/sparklers.png";
 import giftBox from "../assets/categories/sparklers.png";
 import matchBox from "../assets/categories/sparklers.png";
 import gun from "../assets/categories/sparklers.png";
+import kidsCrackers from "../assets/categories/sparklers.png";
+import newArrivals from "../assets/categories/sparklers.png";
 import banner3 from "../assets/banner/ban2.png";
 import delivery2 from "../assets/banner/del2.png";
 import combo from "../assets/banner/combo-box.jpg";
@@ -81,6 +83,8 @@ function LandingPage() {
     "GIFT BOX": giftBox,
     "MATCH BOX": matchBox,
     GUN: gun,
+    "KIDS CRACKERS": kidsCrackers,
+    "NEW ARRIVALS": newArrivals,
   };
 
   // ── ALL ORIGINAL LOGIC UNCHANGED ──────────────────────────────────────────
